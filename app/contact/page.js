@@ -21,26 +21,26 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gradient-to-br dark:from-[#0f2027] dark:via-[#203a43] dark:to-[#2c5364] text-gray-800 dark:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-r from-[#0E1628] to-[#380643] dark:bg-gradient-to-r dark:from-[#0f2027] dark:via-[#203a43] dark:to-[#2c5364] text-gray-800 dark:text-white transition-colors duration-300">
       {/* Header Section */}
       <header className="text-center py-20">
         <h1 className="text-6xl font-extrabold bg-gradient-to-r from-yellow-400 to-yellow-600 text-transparent bg-clip-text animate__animated animate__fadeInDown">
           Contact Me
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mt-4 max-w-2xl mx-auto animate__animated animate__fadeIn animate__delay-1s">
+        <p className="text-xl text-gray-50 dark:text-gray-300 mt-4 max-w-2xl mx-auto animate__animated animate__fadeIn animate__delay-1s">
           Have questions? Want to collaborate? Feel free to drop me a message. I'm here to help and connect!
         </p>
       </header>
 
       {/* Contact Form */}
-      <section className="px-6 py-16">
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg max-w-4xl mx-auto space-y-8 animate__animated animate__fadeInLeft transition-colors duration-300">
+      <section className="px-6 py-16 bg-gradient-to-r from-[#0E1628] to-[#380643] dark:bg-gradient-to-r dark:from-[#0f2027] dark:to-[#2c5364]  ">
+        <div className="bg-gradient-to-r from-[#0E1628] to-[#380643] dark:bg-gradient-to-br dark:from-[#0f2027] dark:via-[#203a43] dark:to-[#2c5364] p-8 rounded-xl shadow-lg max-w-4xl mx-auto space-y-8 animate__animated animate__fadeInLeft transition-colors duration-300">
           <h2 className="text-4xl font-bold text-yellow-500 dark:text-yellow-400">Send a Message</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="block text-sm font-medium text-gray-50 dark:text-gray-300"
               >
                 Name
               </label>
@@ -50,7 +50,7 @@ export default function ContactPage() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full mt-2 p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-yellow-400 focus:border-yellow-400 shadow-lg transition-colors duration-300"
+                className="w-full mt-2 p-4 rounded-xl bg-[#374151] dark:bg-gray-700 text-gray-50 dark:text-white focus:ring-yellow-400 focus:border-yellow-400 shadow-lg transition-colors duration-300"
                 placeholder="Enter your name"
                 required
               />
@@ -58,7 +58,7 @@ export default function ContactPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="block text-sm font-medium text-gray-50 dark:text-gray-300"
               >
                 Email
               </label>
@@ -68,7 +68,7 @@ export default function ContactPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full mt-2 p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-yellow-400 focus:border-yellow-400 shadow-lg transition-colors duration-300"
+                className="w-full mt-2 p-4 rounded-xl bg-[#374151] dark:bg-gray-700 text-gray-50 dark:text-white focus:ring-yellow-400 focus:border-yellow-400 shadow-lg transition-colors duration-300"
                 placeholder="Enter your email"
                 required
               />
@@ -76,7 +76,7 @@ export default function ContactPage() {
             <div>
               <label
                 htmlFor="message"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="block text-sm font-medium text-gray-50 dark:text-gray-300"
               >
                 Message
               </label>
@@ -86,7 +86,7 @@ export default function ContactPage() {
                 value={formData.message}
                 onChange={handleChange}
                 rows="5"
-                className="w-full mt-2 p-4 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-yellow-400 focus:border-yellow-400 shadow-lg transition-colors duration-300"
+                className="w-full mt-2 p-4 rounded-xl bg-[#374151] dark:bg-gray-700 text-gray-50 dark:text-white focus:ring-yellow-400 focus:border-yellow-400 shadow-lg transition-colors duration-300"
                 placeholder="Write your message"
                 required
               ></textarea>
@@ -101,8 +101,10 @@ export default function ContactPage() {
         </div>
       </section>
 
+
+
      {/* Social Media Section */}
-<section className="py-16 bg-gray-100 dark:bg-gray-800 transition-colors duration-300">
+<section className="py-16 bg-gradient-to-r from-[#0E1628] to-[#380643]  dark:bg-gradient-to-r dark:from-[#0f2027] dark:to-[#2c5364] transition-colors duration-300">
   <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <h2 className="text-4xl font-extrabold text-center text-yellow-500 dark:text-yellow-400 mb-12">
       Connect with Me
@@ -113,12 +115,12 @@ export default function ContactPage() {
         href="https://github.com/yourusername"
         target="_blank"
         rel="noreferrer"
-        className="group bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105"
+        className="group bg-[#374151] dark:bg-[#374151] p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105"
         aria-label="GitHub Profile"
       >
         <div className="flex flex-col items-center">
-          <FaGithub className="text-5xl text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300" />
-          <h3 className="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">
+          <FaGithub className="text-5xl text-green-600 dark:text-gray-400 group-hover:text-green-500 dark:group-hover:text-white transition-colors duration-300" />
+          <h3 className="mt-4 text-lg font-semibold text-gray-50 dark:text-gray-200">
             GitHub
           </h3>
         </div>
@@ -128,12 +130,12 @@ export default function ContactPage() {
         href="https://linkedin.com/in/yourusername"
         target="_blank"
         rel="noreferrer"
-        className="group bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105"
+        className="group bg-[#374151] dark:bg-[#374151] p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105"
         aria-label="LinkedIn Profile"
       >
         <div className="flex flex-col items-center">
-          <FaLinkedin className="text-5xl text-blue-500 group-hover:text-blue-600 dark:group-hover:text-white transition-colors duration-300" />
-          <h3 className="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">
+          <FaLinkedin className="text-5xl text-blue-500 group-hover:text-blue-400 dark:group-hover:text-white transition-colors duration-300" />
+          <h3 className="mt-4 text-lg font-semibold text-gray-50 dark:text-gray-200">
             LinkedIn
           </h3>
         </div>
@@ -143,12 +145,12 @@ export default function ContactPage() {
         href="https://twitter.com/yourusername"
         target="_blank"
         rel="noreferrer"
-        className="group bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105"
+        className="group bg-[#374151] dark:bg-[#374151] p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105"
         aria-label="Twitter Profile"
       >
         <div className="flex flex-col items-center">
-          <FaTwitter className="text-5xl text-blue-400 group-hover:text-blue-500 dark:group-hover:text-white transition-colors duration-300" />
-          <h3 className="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">
+          <FaTwitter className="text-5xl text-blue-400 group-hover:text-blue-400 dark:group-hover:text-white transition-colors duration-300" />
+          <h3 className="mt-4 text-lg font-semibold text-gray-50 dark:text-gray-200">
             Twitter
           </h3>
         </div>
@@ -156,12 +158,12 @@ export default function ContactPage() {
       {/* Email Card */}
       <a
         href="mailto:your-email@example.com"
-        className="group bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105"
+        className="group bg-[#374151] dark:bg-[#374151] p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105"
         aria-label="Email Me"
       >
         <div className="flex flex-col items-center">
-          <FaEnvelope className="text-5xl text-yellow-500 group-hover:text-yellow-600 dark:group-hover:text-white transition-colors duration-300" />
-          <h3 className="mt-4 text-lg font-semibold text-gray-700 dark:text-gray-200">
+          <FaEnvelope className="text-5xl text-yellow-500 group-hover:text-yellow-400 dark:group-hover:text-white transition-colors duration-300" />
+          <h3 className="mt-4 text-lg font-semibold text-gray-50 dark:text-gray-200">
             Email
           </h3>
         </div>
@@ -173,7 +175,7 @@ export default function ContactPage() {
 
       {/* Map Section */}
       <section className="py-16 px-6 md:px-16">
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg max-w-5xl mx-auto animate__animated animate__fadeInRight transition-colors duration-300">
+        <div className="bg-gradient-to-r from-[#0E1628] to-[#380643]  dark:bg-gradient-to-r dark:from-[#0f2027] dark:to-[#2c5364] p-8 rounded-xl shadow-lg max-w-5xl mx-auto animate__animated animate__fadeInRight transition-colors duration-300">
           <h2 className="text-4xl font-bold text-yellow-500 dark:text-yellow-400 mb-6">
             Find Me Here
           </h2>

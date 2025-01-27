@@ -67,7 +67,7 @@ export default function Navbar() {
                 Home
               </span>
             </Link>
-            <Link href="/categories" passHref>
+            <Link href="/category" passHref>
               <span className="text-lg font-medium flex items-center gap-2 cursor-pointer transition hover:scale-110 hover:text-gray-300">
                 <FontAwesomeIcon icon={faTags} />
                 Categories
@@ -135,7 +135,7 @@ export default function Navbar() {
                 Home
               </span>
             </Link>
-            <Link href="/categories" passHref>
+            <Link href="/category" passHref>
               <span className="block text-lg font-medium text-white cursor-pointer transition hover:bg-purple-600 px-4 py-2 rounded">
                 <FontAwesomeIcon icon={faTags} className="mr-2" />
                 Categories

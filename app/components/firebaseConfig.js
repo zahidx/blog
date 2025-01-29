@@ -1,7 +1,9 @@
-// Import the functions you need from the Firebase SDKs
+// Import necessary functions from Firebase SDK
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
+import { getStorage } from "firebase/storage";  // Import Firebase Storage
 
 // Firebase configuration using environment variables
 const firebaseConfig = {
@@ -14,34 +16,22 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase with error handling
-let app;
-try {
-  app = initializeApp(firebaseConfig);
-  console.log("Firebase initialized successfully.");
-} catch (error) {
-  console.error("Error initializing Firebase:", error.message);
-}
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-// Optional: Initialize Firebase Analytics if it's a browser environment
-let analytics;
-if (typeof window !== "undefined") {
-  try {
-    analytics = getAnalytics(app);
-    console.log("Firebase Analytics initialized successfully.");
-  } catch (error) {
-    console.error("Error initializing Firebase Analytics:", error.message);
-  }
-}
+// Initialize Firestore
+const db = getFirestore(app);
 
 // Initialize Firebase Authentication
-let auth;
-try {
-  auth = getAuth(app);
-  console.log("Firebase Authentication initialized successfully.");
-} catch (error) {
-  console.error("Error initializing Firebase Authentication:", error.message);
+const auth = getAuth(app);
+
+// Initialize Firebase Analytics (optional)
+let analytics;
+if (typeof window !== "undefined") {
+  analytics = getAnalytics(app);
 }
 
-// Export Firebase instances for use in other files
-export { app, auth, analytics };
+// Initialize Firebase Storage
+const storage = getStorage(app);
+
+export { app, db, auth, analytics, storage };  // Export storage as well

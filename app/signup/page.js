@@ -4,12 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore"; // Added serverTimestamp
 import { getAnalytics } from "firebase/analytics";
-import { FaGoogle, FaPhone } from "react-icons/fa"; // Import the icons
-import toast, { Toaster } from "react-hot-toast"; // Import react-hot-toast
+import { FaGoogle, FaPhone } from "react-icons/fa";
+import toast, { Toaster } from "react-hot-toast";
 
-// Firebase configuration with environment variables
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -20,7 +19,6 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase with error handling
 let app;
 let analytics;
 try {
@@ -35,7 +33,6 @@ try {
   console.error("Error initializing Firebase:", error);
 }
 
-// Initialize Authentication and Firestore
 const auth = getAuth(app);
 const db = getFirestore(app);
 
@@ -50,7 +47,6 @@ export default function Signup() {
 
   const router = useRouter();
 
-  // Google Sign-In Handler
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
@@ -63,7 +59,6 @@ export default function Signup() {
     }
   };
 
-  // Email/Password Sign-Up Handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -76,32 +71,30 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      // Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Save the first name and email to Firestore in a separate collection
+      // Save user details to Firestore with the current timestamp
       await setDoc(doc(db, "users", user.uid), {
         firstName: firstName,
         lastName: lastName,
         email: email,
+        createdAt: serverTimestamp(), // Add server timestamp
       });
 
       setLoading(false);
 
-      // Show success toast
       toast.success("Signup Successful!", {
         duration: 3000,
       });
 
-      // Redirect to login page after 3 seconds
       setTimeout(() => {
         router.push("/login");
       }, 3000);
     } catch (error) {
       setLoading(false);
       setError(error.message);
-      toast.error(error.message); // Show error toast
+      toast.error(error.message);
     }
   };
 

@@ -1,7 +1,9 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // Next.js 13+ uses this for App Router
 import { FiHome, FiFileText, FiUsers, FiBarChart2, FiLogOut, FiUser, FiSettings, FiBell, FiShield, FiHelpCircle } from 'react-icons/fi';
-import { useState } from 'react';
+import { getAuth, signOut } from 'firebase/auth';
 import DashboardContent from '../components/DashboardContent';
 import PostsContent from '../components/PostsContent';
 import UsersContent from '../components/UsersContent';
@@ -16,13 +18,21 @@ import ManagePostsContent from '../components/ManagePostsContent';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('profile');
+  const [isClient, setIsClient] = useState(false); // Track client-side render
+  const router = useRouter();
+  const auth = getAuth();
+
+  // Use useEffect to delay the router usage until after client-side mount
+  useEffect(() => {
+    setIsClient(true); // Set to true once the component is mounted on the client
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
       case 'profile':
         return <ProfileContent />;
       case 'posts':
-        return <ManagePostsContent />;
+        return <PostsContent />;
       case 'accountSettings':
         return <AccountSettingsContent />;
       case 'dashboard':
@@ -30,7 +40,7 @@ export default function Dashboard() {
       case 'notifications':
         return <NotificationsContent />;
       case 'managePosts':
-        return <PostsContent />;
+        return <ManagePostsContent />;
       case 'privacySettings':
         return <PrivacySettingsContent />;
       case 'activityLog':
@@ -42,8 +52,24 @@ export default function Dashboard() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Sign the user out
+      localStorage.removeItem('userData'); // Optionally clear cached user data
+      sessionStorage.removeItem('userData'); // Optionally clear session storage data
+      router.push('/login'); // Redirect to login page after logout (or home page)
+    } catch (error) {
+      console.error('Logout error: ', error.message);
+    }
+  };
+
+  if (!isClient) {
+    // Avoid rendering until it's client-side (no router error)
+    return null;
+  }
+
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900 ">
       {/* Sidebar */}
       <aside className="w-64 bg-white dark:bg-gray-800 p-5 shadow-md fixed h-screen overflow-y-auto">
         <h1 className="text-2xl font-bold text-gray-700 dark:text-white mb-5">Blog Admin</h1>
@@ -58,11 +84,11 @@ export default function Dashboard() {
           <NavItem name="Activity Log" icon={<FiFileText />} onClick={() => setActiveTab('activityLog')} />
           <NavItem name="Help Center" icon={<FiHelpCircle />} onClick={() => setActiveTab('helpCenter')} />
         </nav>
-        <LogoutButton />
+        <LogoutButton onLogout={handleLogout} />
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 p-6 bg-white dark:bg-gray-900 overflow-y-auto h-screen">
+      <main className="pt-32 flex-1 ml-64 p-6 bg-white dark:bg-gray-900 overflow-y-auto h-screen">
         {renderContent()}
       </main>
     </div>
@@ -82,9 +108,12 @@ function NavItem({ name, icon, onClick }) {
 }
 
 // Logout Button Component
-function LogoutButton() {
+function LogoutButton({ onLogout }) {
   return (
-    <button className="w-full mt-10 flex items-center justify-center px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all">
+    <button
+      onClick={onLogout}
+      className="w-full mt-10 flex items-center justify-center px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all"
+    >
       <FiLogOut className="mr-2" /> Logout
     </button>
   );

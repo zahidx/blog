@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../components/firebaseConfig';
 import { FaUserCircle, FaSpinner, FaExclamationCircle } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
@@ -11,6 +11,7 @@ export default function DashboardContent() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const fetchUserData = useCallback(async () => {
     try {
@@ -25,7 +26,11 @@ export default function DashboardContent() {
 
       if (!docSnap.exists()) throw new Error('No user data found.');
 
-      setUserData(docSnap.data());
+      const userData = docSnap.data();
+
+      // Save user data to localStorage (optional, as previously discussed)
+      localStorage.setItem('userData', JSON.stringify(userData));
+      setUserData(userData);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -34,7 +39,27 @@ export default function DashboardContent() {
   }, []);
 
   useEffect(() => {
-    fetchUserData();
+    const auth = getAuth(app);
+    // Listen for changes in authentication state
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+
+        // Check if user data is already in localStorage
+        const storedUserData = localStorage.getItem('userData');
+        if (storedUserData) {
+          setUserData(JSON.parse(storedUserData));
+          setLoading(false);
+        } else {
+          fetchUserData();
+        }
+      } else {
+        setIsAuthenticated(false);
+        setLoading(false); // Stop loading if user is not authenticated
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup listener on unmount
   }, [fetchUserData]);
 
   if (loading) {
@@ -55,16 +80,25 @@ export default function DashboardContent() {
     );
   }
 
-  if (!userData) {
+  if (!isAuthenticated) {
     return (
       <div className="text-center py-6 text-gray-500 dark:text-gray-300">
         <FaUserCircle className="mx-auto text-6xl text-gray-400" />
-        <p className="mt-2 text-lg">No user data available. Please log in.</p>
+        <p className="mt-2 text-lg">User not authenticated. Please log in.</p>
       </div>
     );
   }
 
-  const { firstName, lastName, email, createdAt } = userData;
+  if (!userData) {
+    return (
+      <div className="text-center py-6 text-gray-500 dark:text-gray-300">
+        <FaUserCircle className="mx-auto text-6xl text-gray-400" />
+        <p className="mt-2 text-lg">No user data available. Please log in again.</p>
+      </div>
+    );
+  }
+
+  const { firstName = 'First Name', lastName = 'Last Name', email, createdAt } = userData;
   const formattedDate = createdAt?.seconds
     ? new Date(createdAt.seconds * 1000).toLocaleString()
     : 'Date not available';
@@ -94,7 +128,7 @@ export default function DashboardContent() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-12 max-w-4xl">
-          {[
+          {[ 
             { title: 'Blog Stats', details: ['Total Views: 1500', 'Total Posts: 25'] },
             { title: 'Recent Activity', details: ['Last Post: "How to Use Firebase"', 'Posted on: Jan 25, 2025'] },
             { title: 'Account Settings', details: ['Change your password, update details.'] }

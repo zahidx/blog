@@ -41,14 +41,15 @@ export default function Navbar() {
   };
 
   return (
-    <nav
-      className={`${
-        darkMode
-          ? "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700"
-          : "bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600"
-      } text-white shadow-lg`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav
+  className={`${
+    darkMode
+      ? "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700"
+      : "bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600"
+  } text-white shadow-lg fixed top-0 left-0 w-full z-50`}
+>
+
+      <div className=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
             <h1 className="text-3xl font-extrabold tracking-wide">
@@ -86,8 +87,6 @@ export default function Navbar() {
               </span>
             </Link>
           </div>
-
-          
 
           <button
             onClick={toggleModal}
@@ -189,24 +188,23 @@ export default function Navbar() {
 
             {/* SignUp and Login Buttons */}
             <div className="flex flex-col gap-6">
-            <Link href="/signup">
-  <button
-    onClick={() => setShowModal(false)} // Close the modal when Sign Up is clicked
-    className="w-full bg-gradient-to-r from-teal-400 to-blue-500 text-white py-4 px-6 rounded-lg shadow-xl transform hover:scale-105 hover:shadow-2xl transition-all duration-300 font-semibold text-lg"
-  >
-    <i className="fas fa-user-plus mr-3"></i> Sign Up
-  </button>
-</Link>
+              <Link href="/signup">
+                <button
+                  onClick={() => setShowModal(false)} // Close the modal when Sign Up is clicked
+                  className="w-full bg-gradient-to-r from-teal-400 to-blue-500 text-white py-4 px-6 rounded-lg shadow-xl transform hover:scale-105 hover:shadow-2xl transition-all duration-300 font-semibold text-lg"
+                >
+                  <i className="fas fa-user-plus mr-3"></i> Sign Up
+                </button>
+              </Link>
 
-<Link href="/login">
-  <button
-    onClick={() => setShowModal(false)} // Close the modal when Login is clicked
-    className="w-full bg-gradient-to-r from-yellow-400 to-red-500 text-white py-4 px-6 rounded-lg shadow-xl transform hover:scale-105 hover:shadow-2xl transition-all duration-300 font-semibold text-lg"
-  >
-    <i className="fas fa-sign-in-alt mr-3"></i> Login
-  </button>
-</Link>
-
+              <Link href="/login">
+                <button
+                  onClick={() => setShowModal(false)} // Close the modal when Login is clicked
+                  className="w-full bg-gradient-to-r from-yellow-400 to-red-500 text-white py-4 px-6 rounded-lg shadow-xl transform hover:scale-105 hover:shadow-2xl transition-all duration-300 font-semibold text-lg"
+                >
+                  <i className="fas fa-sign-in-alt mr-3"></i> Login
+                </button>
+              </Link>
             </div>
           </div>
         </div>

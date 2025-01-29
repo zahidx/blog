@@ -208,64 +208,69 @@ export default function DashboardContent() {
       )}
 
       {/* Edit Post Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-96">
-            <h3 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">Edit Post</h3>
-            {/* Content for editing post goes here */}
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
-              <input
-                id="title"
-                type="text"
-                value={editedTitle}
-                onChange={(e) => setEditedTitle(e.target.value)}
-                className="mt-2 p-2 w-full border border-gray-300 rounded-md"
-              />
-            </div>
+{isModalOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+    <div className="bg-white dark:bg-gray-800 p-8 rounded-xl w-full sm:w-[700px] max-w-full max-h-[80vh] overflow-y-auto shadow-2xl transform transition-all duration-300 ease-in-out">
+      <h3 className="text-3xl font-semibold text-gray-900 dark:text-white mb-6">Edit Post</h3>
+      
+      {/* Title Input */}
+      <div>
+        <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-200">Title</label>
+        <input
+          id="title"
+          type="text"
+          value={editedTitle}
+          onChange={(e) => setEditedTitle(e.target.value)}
+          className="mt-2 p-4 w-full border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500 focus:border-blue-600 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition duration-200"
+        />
+      </div>
 
-            <div className="mt-4">
-              <label htmlFor="content" className="block text-sm font-medium text-gray-700">Content</label>
-              <textarea
-                id="content"
-                value={editedContent}
-                onChange={(e) => setEditedContent(e.target.value)}
-                className="mt-2 p-2 w-full h-32 border border-gray-300 rounded-md"
-              />
-            </div>
+      {/* Content Textarea */}
+      <div className="mt-6">
+        <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-200">Content</label>
+        <textarea
+          id="content"
+          value={editedContent}
+          onChange={(e) => setEditedContent(e.target.value)}
+          className="mt-2 p-4 w-full h-48 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500 focus:border-blue-600 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition duration-200"
+        />
+      </div>
 
-            <div className="mt-4">
-              <label htmlFor="image" className="block text-sm font-medium text-gray-700">Post Image</label>
-              <input
-                id="image"
-                type="file"
-                onChange={handleImageChange}
-                className="mt-2"
-              />
-              {imagePreview && (
-                <div className="mt-2">
-                  <img src={imagePreview} alt="Preview" className="max-w-full h-auto" />
-                </div>
-              )}
-            </div>
-
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={handleSaveChanges}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md"
-              >
-                Save Changes
-              </button>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="bg-gray-400 text-white px-4 py-2 rounded-md ml-2"
-              >
-                Cancel
-              </button>
-            </div>
+      {/* Image Upload */}
+      <div className="mt-6">
+        <label htmlFor="image" className="block text-sm font-medium text-gray-700 dark:text-gray-200">Post Image</label>
+        <input
+          id="image"
+          type="file"
+          onChange={handleImageChange}
+          className="mt-2 block w-full text-sm text-gray-500 dark:text-gray-300"
+        />
+        {imagePreview && (
+          <div className="mt-4">
+            <img src={imagePreview} alt="Preview" className="max-w-full h-auto rounded-xl shadow-md border-2 border-gray-200 dark:border-gray-600 transition duration-200" />
           </div>
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Modal Action Buttons */}
+      <div className="mt-6 flex justify-end space-x-4">
+        <button
+          onClick={handleSaveChanges}
+          className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-200"
+        >
+          Save Changes
+        </button>
+        <button
+          onClick={() => setIsModalOpen(false)}
+          className="bg-gray-400 text-white px-6 py-2 rounded-full hover:bg-gray-500 focus:outline-none focus:ring-4 focus:ring-gray-300 transition duration-200"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
       {/* Posts - Display two cards per row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

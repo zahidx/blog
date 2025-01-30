@@ -1,52 +1,45 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Toaster, toast } from "react-hot-toast"; // Import react-hot-toast
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth"; // Add Firebase imports
+import { Toaster, toast } from "react-hot-toast";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { app } from "../components/firebaseConfig";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const router = useRouter();
+  const auth = getAuth(app);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/dashboard");
+      }
+    });
+    return () => unsubscribe();
+  }, [auth, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const auth = getAuth();
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Store user data in localStorage after login
       localStorage.setItem('user', JSON.stringify({
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
       }));
 
-      // Show a success toast
       toast.success("Login Successful!");
 
-      // Countdown before redirecting
-      let countdown = 3;
-      const countdownToast = toast(`Redirecting to Dashboard in ${countdown}...`, {
-        duration: 3000,
-      });
-
-      const interval = setInterval(() => {
-        countdown -= 1;
-        if (countdown > 0) {
-          toast.dismiss(countdownToast); // Dismiss the previous toast
-          toast(`Redirecting to Dashboard in ${countdown}...`, {
-            id: countdownToast, // Use the same ID to update the toast
-          });
-        } else {
-          clearInterval(interval); // Clear the interval when countdown is done
-          router.push("/dashboard"); // Redirect to the dashboard
-        }
-      }, 1000);
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 3000);
     } catch (error) {
       setError("Error logging in: " + error.message);
     }

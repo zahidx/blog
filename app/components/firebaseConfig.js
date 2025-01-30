@@ -1,7 +1,7 @@
 // Import necessary functions from Firebase SDK
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage";  // Import Firebase Storage
 
@@ -16,16 +16,19 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Prevent multiple Firebase initializations
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 // Initialize Firestore
 const db = getFirestore(app);
 
 // Initialize Firebase Authentication
 const auth = getAuth(app);
+setPersistence(auth, browserLocalPersistence).catch((error) => {
+  console.error("Auth Persistence Error:", error);
+});
 
-// Initialize Firebase Analytics (optional)
+// Initialize Firebase Analytics (only if window is available)
 let analytics;
 if (typeof window !== "undefined") {
   analytics = getAnalytics(app);

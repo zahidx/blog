@@ -1,177 +1,172 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { db, auth, storage } from "../components/firebaseConfig";
-import { collection, addDoc, doc, getDoc } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useState, useEffect } from 'react';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { app } from '../components/firebaseConfig';
 
-export default function PostsContent() {
-  const [formData, setFormData] = useState({
-    title: "",
-    content: "",
-    category: "",
-    imageUrl: "", // For the image URL
-    author: "", // Default empty, will be set later
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+export default function CreatePost() {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [author, setAuthor] = useState('');
+  const [category, setCategory] = useState(''); // Category state
+  const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const auth = getAuth();
-    const fetchUserData = async (user) => {
-      if (user) {
-        try {
-          const userDocRef = doc(db, "users", user.uid);
-          const docSnap = await getDoc(userDocRef);
+    const auth = getAuth(app);
+    const user = auth.currentUser;
 
-          if (docSnap.exists()) {
-            const userData = docSnap.data();
-            const fullName = `${userData.firstName} ${userData.lastName}`;
-            setFormData((prevData) => ({ ...prevData, author: fullName }));
-          } else {
-            setFormData((prevData) => ({ ...prevData, author: user.displayName || "Anonymous" }));
-          }
-        } catch (err) {
-          console.error("Error fetching user data:", err);
-        }
-      }
-    };
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        fetchUserData(user);
-      } else {
-        setError("User not authenticated");
-      }
-    });
-
-    return () => unsubscribe();
+    if (user) {
+      setAuthor(user.displayName || '');
+    }
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handlePostSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-    setSuccess("");
-
+    setIsSubmitting(true);
     try {
-      // Save the post with image URL
-      await addDoc(collection(db, "posts"), {
-        ...formData,
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      const user = auth.currentUser;
+
+      if (!user) {
+        setError('User not authenticated');
+        setIsSubmitting(false);
+        return;
+      }
+
+      let imageUrl = imagePreview;
+      if (image) {
+        // Implement image upload to Firebase Storage here
+      }
+
+      const postRef = collection(db, 'posts');
+      await addDoc(postRef, {
+        title,
+        content,
+        author,
+        category, // Save category to Firestore
         createdAt: new Date(),
+        imageUrl: imageUrl || null,
       });
 
-      // Reset form after successful post creation
-      setFormData({
-        title: "",
-        content: "",
-        category: "",
-        imageUrl: "",
-        author: formData.author,
-      });
-
-      setSuccess("Post added successfully!");
-      setLoading(false);
+      setTitle('');
+      setContent('');
+      setImage(null);
+      setImagePreview(null);
+      setCategory(''); // Reset category after submission
+      setIsSubmitting(false);
+      alert('Post created successfully!');
     } catch (err) {
-      setError("Error adding post: " + err.message);
-      setLoading(false);
+      setError('Error creating post: ' + err.message);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
-      <h3 className="text-2xl font-bold text-gray-800 dark:text-white">Create a New Post</h3>
-      <form onSubmit={handlePostSubmit} className="mt-6 space-y-4">
-        {/* Author Field */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Author</label>
-          <input
-            type="text"
-            name="author"
-            value={formData.author}
-            onChange={handleInputChange}
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
-            readOnly
-          />
-        </div>
+    <div className="max-w-4xl mx-auto px-6 py-10 bg-gradient-to-br from-purple-600 via-blue-500 to-pink-500 rounded-2xl shadow-lg">
+      <h3 className="text-4xl font-semibold text-white mb-8 text-center">Create a New Post</h3>
 
+      {error && <p className="text-red-500 mb-4 text-center font-medium">{error}</p>}
+
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-xl shadow-xl dark:bg-gray-800">
         {/* Title Input */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Title</label>
+          <label htmlFor="title" className="block text-lg font-medium text-gray-700 dark:text-gray-200">Title</label>
           <input
+            id="title"
             type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
-            placeholder="Enter post title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="mt-2 p-4 w-full text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-all duration-300 ease-in-out"
             required
           />
         </div>
 
-        {/* Content Input */}
+        {/* Category Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Content</label>
-          <textarea
-            name="content"
-            value={formData.content}
-            onChange={handleInputChange}
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
-            placeholder="Enter your post content"
-            rows="6"
-            required
-          />
-        </div>
-
-        {/* Category Input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+          <label htmlFor="category" className="block text-lg font-medium text-gray-700 dark:text-gray-200">Category</label>
           <select
-            name="category"
-            value={formData.category}
-            onChange={handleInputChange}
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="mt-2 p-4 w-full text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-all duration-300 ease-in-out"
             required
           >
             <option value="">Select a category</option>
-            <option value="Technology">Technology</option>
-            <option value="Sports">Sports</option>
-            <option value="AI">AI</option>
+            <option value="Tech">Tech</option>
+            <option value="Lifestyle">Lifestyle</option>
+            <option value="Health">Health</option>
+            <option value="Education">Education</option>
+            <option value="Entertainment">Entertainment</option>
           </select>
         </div>
 
-        {/* Image URL Input */}
+        {/* Author Input */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Image URL</label>
+          <label htmlFor="author" className="block text-lg font-medium text-gray-700 dark:text-gray-200">Author</label>
           <input
+            id="author"
             type="text"
-            name="imageUrl"
-            value={formData.imageUrl}
-            onChange={handleInputChange}
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
-            placeholder="Paste image URL here"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            className="mt-2 p-4 w-full text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-all duration-300 ease-in-out"
           />
         </div>
 
-        {/* Error and Success Messages */}
-        {error && <p className="text-red-500 mt-2">{error}</p>}
-        {success && <p className="text-green-500 mt-2">{success}</p>}
+        {/* Content Textarea */}
+        <div>
+          <label htmlFor="content" className="block text-lg font-medium text-gray-700 dark:text-gray-200">Content</label>
+          <textarea
+            id="content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="mt-2 p-4 w-full h-40 text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-all duration-300 ease-in-out"
+            required
+          />
+        </div>
+
+        {/* Image Upload */}
+        <div>
+          <label htmlFor="image" className="block text-lg font-medium text-gray-700 dark:text-gray-200">Image (Optional)</label>
+          <input
+            id="image"
+            type="file"
+            onChange={handleImageChange}
+            className="mt-2 block w-full text-lg text-gray-500 dark:text-gray-300 rounded-xl border-2 border-gray-300 dark:bg-gray-700 dark:border-gray-600 transition-all duration-300 ease-in-out"
+          />
+          {imagePreview && (
+            <div className="mt-6 flex justify-center">
+              <img src={imagePreview} alt="Preview" className="max-w-full h-auto rounded-xl shadow-xl border-2 border-gray-300 dark:border-gray-600 transition-all duration-300 ease-in-out" />
+            </div>
+          )}
+        </div>
 
         {/* Submit Button */}
-        <button
-          type="submit"
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md w-full transition duration-300 ease-in-out hover:bg-blue-500"
-          disabled={loading}
-        >
-          {loading ? "Submitting..." : "Create Post"}
-        </button>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`bg-indigo-600 text-white px-8 py-3 rounded-xl text-lg ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-300'}`}
+          >
+            {isSubmitting ? 'Submitting...' : 'Create Post'}
+          </button>
+        </div>
       </form>
     </div>
   );

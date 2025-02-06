@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // Next.js 13+ uses this for App Router
-import { FiHome, FiFileText, FiUsers, FiBarChart2, FiLogOut, FiUser, FiSettings, FiBell, FiShield, FiHelpCircle } from 'react-icons/fi';
+import { useRouter } from 'next/navigation';
+import { FiHome, FiFileText, FiUsers, FiBarChart2, FiLogOut, FiUser, FiSettings } from 'react-icons/fi';
 import { getAuth, signOut } from 'firebase/auth';
 import DashboardContent from '../components/DashboardContent';
 import PostsContent from '../components/PostsContent';
@@ -10,10 +10,6 @@ import UsersContent from '../components/UsersContent';
 import AnalyticsContent from '../components/AnalyticsContent';
 import ProfileContent from '../components/ProfileContent';
 import AccountSettingsContent from '../components/AccountSettingsContent';
-import NotificationsContent from '../components/NotificationsContent';
-import PrivacySettingsContent from '../components/PrivacySettingsContent';
-import ActivityLogContent from '../components/ActivityLogContent';
-import HelpCenterContent from '../components/HelpCenterContent';
 import ManagePostsContent from '../components/ManagePostsContent';
 
 export default function Dashboard() {
@@ -22,7 +18,6 @@ export default function Dashboard() {
   const router = useRouter();
   const auth = getAuth();
 
-  // Use useEffect to delay the router usage until after client-side mount
   useEffect(() => {
     setIsClient(true); // Set to true once the component is mounted on the client
   }, []);
@@ -37,16 +32,8 @@ export default function Dashboard() {
         return <AccountSettingsContent />;
       case 'dashboard':
         return <DashboardContent />;
-      case 'notifications':
-        return <NotificationsContent />;
       case 'managePosts':
         return <ManagePostsContent />;
-      case 'privacySettings':
-        return <PrivacySettingsContent />;
-      case 'activityLog':
-        return <ActivityLogContent />;
-      case 'helpCenter':
-        return <HelpCenterContent />;
       default:
         return <ProfileContent />;
     }
@@ -64,12 +51,11 @@ export default function Dashboard() {
   };
 
   if (!isClient) {
-    // Avoid rendering until it's client-side (no router error)
     return null;
   }
 
   return (
-    <div className="flex h-screen bg-gray-100 dark:bg-gray-900 ">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
       {/* Sidebar */}
       <aside className="w-64 bg-white dark:bg-gray-800 p-5 shadow-md fixed h-screen overflow-y-auto">
         <h1 className="text-2xl font-bold text-gray-700 dark:text-white mb-5">Blog Admin</h1>
@@ -78,11 +64,7 @@ export default function Dashboard() {
           <NavItem name="My Posts" icon={<FiFileText />} onClick={() => setActiveTab('posts')} />
           <NavItem name="Account Settings" icon={<FiSettings />} onClick={() => setActiveTab('accountSettings')} />
           <NavItem name="Dashboard" icon={<FiBarChart2 />} onClick={() => setActiveTab('dashboard')} />
-          <NavItem name="Notifications" icon={<FiBell />} onClick={() => setActiveTab('notifications')} />
           <NavItem name="Manage Posts" icon={<FiFileText />} onClick={() => setActiveTab('managePosts')} />
-          <NavItem name="Privacy Settings" icon={<FiShield />} onClick={() => setActiveTab('privacySettings')} />
-          <NavItem name="Activity Log" icon={<FiFileText />} onClick={() => setActiveTab('activityLog')} />
-          <NavItem name="Help Center" icon={<FiHelpCircle />} onClick={() => setActiveTab('helpCenter')} />
         </nav>
         <LogoutButton onLogout={handleLogout} />
       </aside>

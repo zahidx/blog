@@ -1,7 +1,7 @@
 // Import necessary functions from Firebase SDK
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth, setPersistence, browserLocalPersistence } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage";  // Import Firebase Storage
 
@@ -37,4 +37,17 @@ if (typeof window !== "undefined") {
 // Initialize Firebase Storage
 const storage = getStorage(app);
 
-export { app, db, auth, analytics, storage };  // Export storage as well
+// Function to get the current authenticated user
+const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        resolve(user);
+      } else {
+        resolve(null);
+      }
+    }, reject);
+  });
+};
+
+export { app, db, auth, analytics, storage, getCurrentUser };

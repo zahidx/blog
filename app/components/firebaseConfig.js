@@ -1,9 +1,10 @@
-// Import necessary functions from Firebase SDK
+// components/firebaseConfig.js
+
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged } from "firebase/auth";
-import { getAnalytics } from "firebase/analytics";
+import { getAuth, setPersistence, browserLocalPersistence, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 import { getStorage } from "firebase/storage";  // Import Firebase Storage
+import { getAnalytics } from "firebase/analytics";  // Import Firebase Analytics
 
 // Firebase configuration using environment variables
 const firebaseConfig = {
@@ -28,14 +29,17 @@ setPersistence(auth, browserLocalPersistence).catch((error) => {
   console.error("Auth Persistence Error:", error);
 });
 
+// Initialize Firebase Storage
+const storage = getStorage(app);
+
+// Initialize Google Auth Provider
+const googleProvider = new GoogleAuthProvider();
+
 // Initialize Firebase Analytics (only if window is available)
 let analytics;
 if (typeof window !== "undefined") {
   analytics = getAnalytics(app);
 }
-
-// Initialize Firebase Storage
-const storage = getStorage(app);
 
 // Function to get the current authenticated user
 const getCurrentUser = () => {
@@ -50,4 +54,4 @@ const getCurrentUser = () => {
   });
 };
 
-export { app, db, auth, analytics, storage, getCurrentUser };
+export { app, db, auth, storage, googleProvider, analytics, getCurrentUser };

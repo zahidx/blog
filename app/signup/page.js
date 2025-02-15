@@ -2,53 +2,31 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore"; // Added serverTimestamp
-import { getAnalytics } from "firebase/analytics";
-import { FaGoogle, FaPhone } from "react-icons/fa";
+import { auth, db, googleProvider } from "../components/firebaseConfig";
+import { signInWithPopup, createUserWithEmailAndPassword } from "firebase/auth";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import toast, { Toaster } from "react-hot-toast";
-
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-};
-
-let app;
-let analytics;
-try {
-  app = initializeApp(firebaseConfig);
-  console.log("Firebase initialized successfully");
-
-  if (typeof window !== "undefined") {
-    analytics = getAnalytics(app);
-    console.log("Analytics initialized successfully");
-  }
-} catch (error) {
-  console.error("Error initializing Firebase:", error);
-}
-
-const auth = getAuth(app);
-const db = getFirestore(app);
+import { FaGoogle, FaPhone, FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 
 export default function Signup() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [userData, setUserData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
+    const provider = new googleProvider();
     try {
       const result = await signInWithPopup(auth, provider);
       console.log("Google Sign-In successful:", result.user);
@@ -63,10 +41,7 @@ export default function Signup() {
     e.preventDefault();
     setError(null);
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+    const { email, password, firstName, lastName } = userData;
 
     setLoading(true);
 
@@ -74,20 +49,15 @@ export default function Signup() {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Save user details to Firestore with the current timestamp
       await setDoc(doc(db, "users", user.uid), {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        createdAt: serverTimestamp(), // Add server timestamp
+        firstName,
+        lastName,
+        email,
+        createdAt: serverTimestamp(),
       });
 
       setLoading(false);
-
-      toast.success("Signup Successful!", {
-        duration: 3000,
-      });
-
+      toast.success("Signup Successful!", { duration: 3000 });
       setTimeout(() => {
         router.push("/login");
       }, 3000);
@@ -136,97 +106,73 @@ export default function Signup() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex space-x-4">
             <div className="w-1/2">
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                First Name
-              </label>
-              <input
-                type="text"
-                id="firstName"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-                className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-[#E69A10] focus:border-[#E69A10] shadow-xl transition-all duration-300 ease-in-out"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  value={userData.firstName}
+                  onChange={handleInputChange}
+                  placeholder="First Name"
+                  required
+                  className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-[#E69A10] focus:border-[#E69A10] shadow-xl transition-all duration-300 ease-in-out pl-10"
+                />
+                <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300" />
+              </div>
             </div>
             <div className="w-1/2">
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Last Name
-              </label>
-              <input
-                type="text"
-                id="lastName"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-                className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-[#E69A10] focus:border-[#E69A10] shadow-xl transition-all duration-300 ease-in-out"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={userData.lastName}
+                  onChange={handleInputChange}
+                  placeholder="Last Name"
+                  required
+                  className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-[#E69A10] focus:border-[#E69A10] shadow-xl transition-all duration-300 ease-in-out pl-10"
+                />
+                <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300" />
+              </div>
             </div>
           </div>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Email Address
-            </label>
+          <div className="relative">
             <input
               type="email"
               id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
+              value={userData.email}
+              onChange={handleInputChange}
+              placeholder="Email Address"
               required
-              className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-[#E69A10] focus:border-[#E69A10] shadow-xl transition-all duration-300 ease-in-out"
+              className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-[#E69A10] focus:border-[#E69A10] shadow-xl transition-all duration-300 ease-in-out pl-10"
             />
+            <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300" />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Password
-            </label>
+          <div className="relative">
             <input
               type="password"
               id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={userData.password}
+              onChange={handleInputChange}
+              placeholder="Password"
               required
-              className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-[#E69A10] focus:border-[#E69A10] shadow-xl transition-all duration-300 ease-in-out"
+              className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-[#E69A10] focus:border-[#E69A10] shadow-xl transition-all duration-300 ease-in-out pl-10"
             />
-          </div>
-
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              className="w-full p-2 text-sm border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-[#E69A10] focus:border-[#E69A10] shadow-xl transition-all duration-300 ease-in-out"
-            />
+            <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-300" />
           </div>
 
           <button
             type="submit"
-            className={`w-full py-3 mt-6 text-white bg-[#E69A10] rounded-lg shadow-xl hover:bg-[#E5970F] transition-all duration-300 ease-in-out ${
-              loading ? "cursor-not-allowed opacity-70" : ""
-            }`}
+            className={`w-full py-3 text-white bg-[#E69A10] rounded-lg shadow-xl hover:bg-[#d88e0a] transition-all duration-300 ease-in-out ${loading && "opacity-50 cursor-not-allowed"}`}
             disabled={loading}
           >
             {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
-        {/* Already have an account - Login Link */}
-        <div className="mt-6">
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Already have an account?{" "}
-            <a
-              href="/login"
-              className="text-[#E69A10] hover:text-[#c23527] transition-all duration-300 ease-in-out"
-            >
-              Login
-            </a>
-          </p>
-        </div>
       </div>
     </div>
   );

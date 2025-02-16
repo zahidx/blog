@@ -11,16 +11,18 @@ export default function CreatePost() {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [author, setAuthor] = useState('');
-  const [category, setCategory] = useState(''); // Category state
+  const [authorEmail, setAuthorEmail] = useState('');
+  const [category, setCategory] = useState('');
+  const [tags, setTags] = useState('');
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const auth = getAuth(app);
     const user = auth.currentUser;
-
     if (user) {
       setAuthor(user.displayName || '');
+      setAuthorEmail(user.email || '');
     }
   }, []);
 
@@ -29,9 +31,7 @@ export default function CreatePost() {
     if (file) {
       setImage(file);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
+      reader.onloadend = () => setImagePreview(reader.result);
       reader.readAsDataURL(file);
     }
   };
@@ -39,6 +39,7 @@ export default function CreatePost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     try {
       const auth = getAuth(app);
       const db = getFirestore(app);
@@ -50,26 +51,24 @@ export default function CreatePost() {
         return;
       }
 
-      let imageUrl = imagePreview;
-      if (image) {
-        // Implement image upload to Firebase Storage here
-      }
-
       const postRef = collection(db, 'posts');
       await addDoc(postRef, {
         title,
         content,
         author,
-        category, // Save category to Firestore
+        authorEmail,
+        category,
+        tags: tags.split(',').map((tag) => tag.trim()),
         createdAt: new Date(),
-        imageUrl: imageUrl || null,
+        imageUrl: imagePreview || null,
       });
 
       setTitle('');
       setContent('');
       setImage(null);
       setImagePreview(null);
-      setCategory(''); // Reset category after submission
+      setCategory('');
+      setTags('');
       setIsSubmitting(false);
       alert('Post created successfully!');
     } catch (err) {
@@ -79,94 +78,101 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 bg-gradient-to-br from-purple-600 via-blue-500 to-pink-500 rounded-2xl shadow-lg">
-      <h3 className="text-4xl font-semibold text-white mb-8 text-center">Create a New Post</h3>
+    <div className="max-w-2xl mt-5 mx-auto p-6 bg-[#f6fff8] dark:bg-gradient-to-r from-[#2F3A47] via-[#2F3A47] to-[#2F3A47] rounded-2xl shadow-xl">
+      <h3 className="text-2xl font-bold text-gray-800 dark:text-white text-center mb-4">
+        Create a New Post
+      </h3>
+      {error && <p className="text-red-500 text-center mb-3">{error}</p>}
 
-      {error && <p className="text-red-500 mb-4 text-center font-medium">{error}</p>}
-
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-xl shadow-xl dark:bg-gray-800">
-        {/* Title Input */}
-        <div>
-          <label htmlFor="title" className="block text-lg font-medium text-gray-700 dark:text-gray-200">Title</label>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <input
-            id="title"
             type="text"
+            placeholder="Post Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="mt-2 p-4 w-full text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-all duration-300 ease-in-out"
+            className="w-full p-2 rounded-lg border-2 border-gray-200 dark:bg-gray-800 dark:text-white dark:focus:ring-2 dark:focus:ring-indigo-600"
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="Author Name"
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            className="w-full p-2 rounded-lg border-2 border-gray-200 dark:bg-gray-800 dark:text-white dark:focus:ring-2 dark:focus:ring-indigo-600"
             required
           />
         </div>
 
-        {/* Category Selection */}
-        <div>
-          <label htmlFor="category" className="block text-lg font-medium text-gray-700 dark:text-gray-200">Category</label>
+        <input
+          type="email"
+          placeholder="Your Email"
+          value={authorEmail}
+          onChange={(e) => setAuthorEmail(e.target.value)}
+          className="w-full p-2 rounded-lg border-2 border-gray-200 dark:bg-gray-800 dark:text-white dark:focus:ring-2 dark:focus:ring-indigo-600"
+          required
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <select
-            id="category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="mt-2 p-4 w-full text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-all duration-300 ease-in-out"
+            className="w-full p-2 rounded-lg border-2 border-gray-200 dark:bg-gray-800 dark:text-white dark:focus:ring-2 dark:focus:ring-indigo-600"
             required
           >
-            <option value="">Select a category</option>
+            <option value="">Select Category</option>
             <option value="Tech">Tech</option>
             <option value="Lifestyle">Lifestyle</option>
             <option value="Health">Health</option>
             <option value="Education">Education</option>
             <option value="Entertainment">Entertainment</option>
           </select>
-        </div>
 
-        {/* Author Input */}
-        <div>
-          <label htmlFor="author" className="block text-lg font-medium text-gray-700 dark:text-gray-200">Author</label>
           <input
-            id="author"
             type="text"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-            className="mt-2 p-4 w-full text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-all duration-300 ease-in-out"
+            placeholder="Tags (comma-separated)"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="w-full p-2 rounded-lg border-2 border-gray-200 dark:bg-gray-800 dark:text-white dark:focus:ring-2 dark:focus:ring-indigo-600"
           />
         </div>
 
-        {/* Content Textarea */}
-        <div>
-          <label htmlFor="content" className="block text-lg font-medium text-gray-700 dark:text-gray-200">Content</label>
-          <textarea
-            id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="mt-2 p-4 w-full h-40 text-lg border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-all duration-300 ease-in-out"
-            required
-          />
-        </div>
+        <textarea
+          placeholder="Write your post content here..."
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="w-full p-2 h-36 rounded-lg border-2 border-gray-200 dark:bg-gray-800 dark:text-white dark:focus:ring-2 dark:focus:ring-indigo-600"
+          required
+        />
 
-        {/* Image Upload */}
-        <div>
-          <label htmlFor="image" className="block text-lg font-medium text-gray-700 dark:text-gray-200">Image (Optional)</label>
+        <div className="flex flex-col">
+          <label htmlFor="imageUpload" className="text-gray-700 dark:text-white mb-2">
+            Upload Image
+          </label>
           <input
-            id="image"
+            id="imageUpload"
             type="file"
             onChange={handleImageChange}
-            className="mt-2 block w-full text-lg text-gray-500 dark:text-gray-300 rounded-xl border-2 border-gray-300 dark:bg-gray-700 dark:border-gray-600 transition-all duration-300 ease-in-out"
+            className="w-full p-2 rounded-lg border-2 border-gray-200 dark:bg-gray-800 dark:text-white dark:focus:ring-2 dark:focus:ring-indigo-600"
           />
+
           {imagePreview && (
-            <div className="mt-6 flex justify-center">
-              <img src={imagePreview} alt="Preview" className="max-w-full h-auto rounded-xl shadow-xl border-2 border-gray-300 dark:border-gray-600 transition-all duration-300 ease-in-out" />
-            </div>
+            <img
+              src={imagePreview}
+              alt="Image Preview"
+              className="w-full mt-3 rounded-lg shadow-lg"
+            />
           )}
         </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`bg-indigo-600 text-white px-8 py-3 rounded-xl text-lg ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-300'}`}
-          >
-            {isSubmitting ? 'Submitting...' : 'Create Post'}
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full py-3 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition duration-200 disabled:opacity-50"
+        >
+          {isSubmitting ? 'Submitting...' : 'Create Post'}
+        </button>
       </form>
     </div>
   );

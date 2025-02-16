@@ -6,8 +6,6 @@ import { FiHome, FiFileText, FiUsers, FiBarChart2, FiLogOut, FiUser, FiSettings 
 import { getAuth, signOut } from 'firebase/auth';
 import DashboardContent from '../components/DashboardContent';
 import PostsContent from '../components/PostsContent';
-import UsersContent from '../components/UsersContent';
-import AnalyticsContent from '../components/AnalyticsContent';
 import ProfileContent from '../components/ProfileContent';
 import AccountSettingsContent from '../components/AccountSettingsContent';
 import ManagePostsContent from '../components/ManagePostsContent';
@@ -57,12 +55,12 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
       {/* Sidebar */}
-      <aside className="w-64 bg-white dark:bg-gray-800 p-5 shadow-md fixed h-screen overflow-y-auto">
+      <aside className="w-56 bg-white dark:bg-gray-800 p-5 shadow-md fixed h-screen overflow-y-auto">
         <h1 className="text-2xl font-bold text-gray-700 dark:text-white mb-5">Blog Admin</h1>
         <nav className="space-y-2">
           <NavItem name="Profile" icon={<FiUser />} onClick={() => setActiveTab('profile')} />
           <NavItem name="My Posts" icon={<FiFileText />} onClick={() => setActiveTab('posts')} />
-          <NavItem name="Account Settings" icon={<FiSettings />} onClick={() => setActiveTab('accountSettings')} />
+          <NavItem name="Settings" icon={<FiSettings />} onClick={() => setActiveTab('accountSettings')} />
           <NavItem name="Dashboard" icon={<FiBarChart2 />} onClick={() => setActiveTab('dashboard')} />
           <NavItem name="Manage Posts" icon={<FiFileText />} onClick={() => setActiveTab('managePosts')} />
         </nav>
@@ -70,7 +68,7 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="pt-32 flex-1 ml-64 p-6 bg-white dark:bg-gray-900 overflow-y-auto h-screen">
+      <main className="pt-16 flex-1 ml-48 p-6 bg-white dark:bg-gray-900 overflow-y-auto h-screen">
         {renderContent()}
       </main>
     </div>

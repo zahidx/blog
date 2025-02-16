@@ -1,150 +1,131 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../components/firebaseConfig';
-import { FaUserCircle, FaSpinner, FaExclamationCircle } from 'react-icons/fa';
-import toast, { Toaster } from 'react-hot-toast';
+import { FaSignOutAlt, FaChartBar, FaUsers, FaCog, FaSun, FaMoon } from 'react-icons/fa';
+import { Line } from 'react-chartjs-2';
+import { Toaster, toast } from 'react-hot-toast';
+import 'chart.js/auto';
 
-export default function DashboardContent() {
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+export default function AdvancedDashboard() {
+  const [user, setUser] = useState(null);
+  const [theme, setTheme] = useState('dark');
+  const [chartData, setChartData] = useState({});
 
   const fetchUserData = useCallback(async () => {
     try {
       const auth = getAuth(app);
       const db = getFirestore(app);
-      const user = auth.currentUser;
+      const currentUser = auth.currentUser;
 
-      if (!user) throw new Error('User not authenticated.');
+      if (!currentUser) throw new Error('User not authenticated');
 
-      const userDocRef = doc(db, 'users', user.uid);
-      const docSnap = await getDoc(userDocRef);
+      const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+      if (!userDoc.exists()) throw new Error('User data not found');
 
-      if (!docSnap.exists()) throw new Error('No user data found.');
-
-      const userData = docSnap.data();
-
-      // Save user data to localStorage (optional, as previously discussed)
-      localStorage.setItem('userData', JSON.stringify(userData));
-      setUserData(userData);
+      setUser(userDoc.data());
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      toast.error(err.message);
     }
   }, []);
 
   useEffect(() => {
     const auth = getAuth(app);
-    // Listen for changes in authentication state
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setIsAuthenticated(true);
-
-        // Check if user data is already in localStorage
-        const storedUserData = localStorage.getItem('userData');
-        if (storedUserData) {
-          setUserData(JSON.parse(storedUserData));
-          setLoading(false);
-        } else {
-          fetchUserData();
-        }
+        fetchUserData();
       } else {
-        setIsAuthenticated(false);
-        setLoading(false); // Stop loading if user is not authenticated
+        setUser(null);
       }
     });
 
-    return () => unsubscribe(); // Cleanup listener on unmount
+    return () => unsubscribe();
   }, [fetchUserData]);
 
-  if (loading) {
+  useEffect(() => {
+    setChartData({
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [
+        {
+          label: 'Revenue',
+          data: [5000, 7000, 6500, 8000, 12000, 15000],
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.2)',
+          tension: 0.4,
+        },
+      ],
+    });
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+    document.documentElement.classList.toggle('dark');
+  };
+
+  const handleLogout = () => {
+    signOut(getAuth(app))
+      .then(() => toast.success('Logged out successfully'))
+      .catch((err) => toast.error('Error logging out: ' + err.message));
+  };
+
+  if (!user) {
     return (
-      <div className="flex justify-center items-center py-6">
-        <FaSpinner className="animate-spin text-4xl text-gray-500 dark:text-gray-300" />
-        <p className="ml-2 text-lg text-gray-500 dark:text-gray-300">Loading...</p>
+      <div className="text-center py-10 text-gray-500 dark:text-gray-300">
+        <p className="text-xl">Please log in to access the dashboard.</p>
       </div>
     );
   }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center py-6 text-red-500 dark:text-red-300">
-        <FaExclamationCircle className="mr-2" />
-        <p>{error}</p>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="text-center py-6 text-gray-500 dark:text-gray-300">
-        <FaUserCircle className="mx-auto text-6xl text-gray-400" />
-        <p className="mt-2 text-lg">User not authenticated. Please log in.</p>
-      </div>
-    );
-  }
-
-  if (!userData) {
-    return (
-      <div className="text-center py-6 text-gray-500 dark:text-gray-300">
-        <FaUserCircle className="mx-auto text-6xl text-gray-400" />
-        <p className="mt-2 text-lg">No user data available. Please log in again.</p>
-      </div>
-    );
-  }
-
-  const { firstName = 'First Name', lastName = 'Last Name', email, createdAt } = userData;
-  const formattedDate = createdAt?.seconds
-    ? new Date(createdAt.seconds * 1000).toLocaleString()
-    : 'Date not available';
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#0E1628] to-[#380643] dark:bg-gradient-to-r dark:from-[#0E1628] dark:to-[#380643] text-white">
-      <div className="flex flex-col items-center py-10">
-        <div className="relative w-full max-w-4xl text-center">
-          <div className="absolute inset-0 bg-black opacity-40 rounded-lg backdrop-blur-md"></div>
-          <div className="relative bg-cover bg-center h-80 rounded-lg shadow-2xl overflow-hidden" style={{ backgroundImage: 'url(/path-to-your-image.jpg)' }}>
-            <div className="absolute inset-0 flex flex-col justify-center items-center text-white px-8">
-              <h2 className="text-5xl font-bold mb-3 drop-shadow-lg">Welcome Back, {firstName}</h2>
-              <p className="text-xl opacity-90">Manage your account and blog activity</p>
+    <div className={`min-h-screen bg-gray-100 dark:bg-[#121212] text-gray-900 dark:text-white`}>
+      {/* Top Navigation Bar */}
+      <header className="flex justify-between items-center p-6 bg-white dark:bg-gray-800 shadow-lg">
+        <h1 className="text-3xl font-semibold">Dashboard</h1>
+        <div className="flex items-center space-x-4">
+          <button onClick={toggleTheme} className="p-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+            {theme === 'dark' ? <FaSun className="text-yellow-500" /> : <FaMoon className="text-gray-800" />}
+          </button>
+          <span className="text-lg">{user.firstName}</span>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center"
+          >
+            <FaSignOutAlt className="mr-2" /> Logout
+          </button>
+        </div>
+      </header>
+
+      {/* Dashboard Content */}
+      <div className="p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Stats Cards with Neon Effects */}
+        {[
+          { title: 'Total Users', value: '15,300', icon: FaUsers, color: 'bg-blue-500' },
+          { title: 'Revenue', value: '$98,200', icon: FaChartBar, color: 'bg-green-500' },
+          { title: 'Settings', value: 'Advanced', icon: FaCog, color: 'bg-purple-500' }
+        ].map((card, index) => (
+          <div key={index} className={`${card.color} text-white p-6 rounded-lg shadow-2xl transform hover:scale-105 transition-all`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-lg font-semibold">{card.title}</h4>
+                <p className="text-3xl font-bold">{card.value}</p>
+              </div>
+              <card.icon className="text-4xl opacity-75" />
             </div>
           </div>
-        </div>
+        ))}
 
-        <div className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-2xl mt-8 w-full max-w-4xl text-center">
-          <div className="flex flex-col items-center space-y-4">
-            <div className="h-32 w-32 rounded-full bg-gradient-to-r from-[#E5970F] to-[#E69A10] p-2 shadow-xl transform hover:scale-105 transition-all duration-300">
-              <FaUserCircle className="h-full w-full text-white" />
-            </div>
-            <h3 className="text-4xl font-semibold text-gray-800 dark:text-white">{firstName} {lastName}</h3>
-            <p className="text-lg text-gray-600 dark:text-gray-300">{email}</p>
-            <p className="text-lg text-gray-600 dark:text-gray-300">Joined on: {formattedDate}</p>
+        {/* Interactive Chart Section */}
+        <div className="col-span-1 md:col-span-2 lg:col-span-3">
+          <h2 className="text-2xl font-semibold mb-4">Revenue Insights</h2>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+            <Line data={chartData} />
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-12 max-w-4xl">
-          {[ 
-            { title: 'Blog Stats', details: ['Total Views: 1500', 'Total Posts: 25'] },
-            { title: 'Recent Activity', details: ['Last Post: "How to Use Firebase"', 'Posted on: Jan 25, 2025'] },
-            { title: 'Account Settings', details: ['Change your password, update details.'] }
-          ].map((card, index) => (
-            <div key={index} className="relative bg-white dark:bg-gray-900 p-6 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 text-center">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-10 rounded-lg"></div>
-              <h4 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">{card.title}</h4>
-              {card.details.map((detail, idx) => (
-                <p key={idx} className="text-lg text-gray-600 dark:text-gray-300">{detail}</p>
-              ))}
-            </div>
-          ))}
         </div>
       </div>
 
-      <Toaster position="top-right" reverseOrder={false} containerStyle={{ marginTop: "50px" }} />
+      <Toaster position="top-right" />
     </div>
   );
 }

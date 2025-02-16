@@ -22,23 +22,19 @@ export default function DashboardContent() {
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Try to load data from localStorage first
     const storedData = localStorage.getItem('userData');
     if (storedData) {
       setUserData(JSON.parse(storedData));
       setFormData(JSON.parse(storedData));
       setLoading(false);
-      return; // If data is in localStorage, skip the Firestore fetch
+      return;
     }
 
-    // If no data in localStorage, fetch from Firestore
     try {
       const user = auth.currentUser;
-
       if (user) {
         const userDocRef = doc(db, 'users', user.uid);
         const docSnap = await getDoc(userDocRef);
-
         if (docSnap.exists()) {
           const fetchedData = docSnap.data();
           setUserData(fetchedData);
@@ -47,7 +43,7 @@ export default function DashboardContent() {
             lastName: fetchedData.lastName,
             email: fetchedData.email
           });
-          localStorage.setItem('userData', JSON.stringify(fetchedData)); // Save to localStorage
+          localStorage.setItem('userData', JSON.stringify(fetchedData));
         } else {
           setError('No user data found.');
         }
@@ -62,20 +58,20 @@ export default function DashboardContent() {
   };
 
   useEffect(() => {
-    fetchUserData(); // Call fetchUserData on component mount
+    fetchUserData();
   }, []);
 
   const handleEditClick = () => {
-    setIsEditing(true); // Show the editing form
+    setIsEditing(true);
   };
 
   const handleCancelEdit = () => {
-    setIsEditing(false); // Close the editing form
+    setIsEditing(false);
     setFormData({
       firstName: userData.firstName,
       lastName: userData.lastName,
       email: userData.email
-    }); // Reset form to original data
+    });
   };
 
   const handleInputChange = (e) => {
@@ -97,8 +93,8 @@ export default function DashboardContent() {
         const userDocRef = doc(db, 'users', user.uid);
         await updateDoc(userDocRef, formData);
         setUserData({ ...userData, ...formData });
-        localStorage.setItem('userData', JSON.stringify({ ...userData, ...formData })); // Update localStorage
-        setIsEditing(false); // Close the editing form after submission
+        localStorage.setItem('userData', JSON.stringify({ ...userData, ...formData }));
+        setIsEditing(false);
         toast.success('Profile updated successfully!');
       }
     } catch (err) {
@@ -139,94 +135,96 @@ export default function DashboardContent() {
     ? new Date(createdAt.seconds * 1000).toLocaleString()
     : 'Date not available';
 
-  return (
-    <div className="max-w-4xl mx-auto px-6 py-8 bg-gradient-to-br from-gray-800 via-gray-600 to-gray-900 text-white rounded-lg shadow-xl">
-      <div className="text-center mb-8">
-        <h3 className="text-4xl font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-teal-200 to-cyan-100 transition-all duration-500 ease-in-out transform hover:scale-105">
-          {`Welcome Back, ${firstName}!`}
-        </h3>
-        <p className="text-lg text-gray-50 opacity-80 transition-all duration-500 ease-in-out hover:opacity-100">
-          Manage your profile and settings here.
-        </p>
-      </div>
+    return (
+      <div className="w-full mx-auto px-6 py-8 text-white rounded-lg">
+        <div className="text-center mb-6">
+        <h3 className="text-5xl font-semibold mb-2 text-transparent bg-clip-text dark:bg-gradient-to-r from-teal-300 to-cyan-200 transition-all duration-500 ease-in-out bg-[#0e8174] to-[#10ad9b]">
 
-      {/* User Data Section */}
-      <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-6 rounded-xl shadow-xl mb-6 transition-all duration-500 transform hover:scale-105">
-        <div className="flex justify-center mb-4">
-          <FaUserCircle className="text-teal-600 text-6xl transform transition-transform duration-500 hover:scale-125 hover:text-teal-700" />
+    {`Welcome Back, ${firstName}!`}
+  </h3>
+  <p className="text-xl text-[#1E2A38] dark:text-gray-50 opacity-80 transition-all duration-300 ease-in-out hover:opacity-100">
+    Manage your profile below.
+  </p>
+</div>
+
+    
+        {/* User Data Section */}
+        <div className="dark:text-gray-200 p-6 rounded-xl mb-4">
+          <div className="flex justify-center mb-4">
+            <FaUserCircle className="text-teal-600 text-8xl hover:text-teal-500 transition-all duration-300" />
+          </div>
+          <h4 className="text-3xl text-gray-900 dark:text-gray-100 text-center font-semibold">{firstName} {lastName}</h4>
+          <p className="text-lg text-gray-600 text-center dark:text-gray-300 mb-2">Email: <span className="font-medium">{email}</span></p>
+          <p className="text-lg text-center text-gray-600 dark:text-gray-300">Joined: <span className="font-medium">{formattedDate}</span></p>
         </div>
-        <h4 className="text-2xl font-semibold">{firstName} {lastName}</h4>
-        <p className="text-lg mb-2">Email: <span className="font-medium">{email}</span></p>
-        <p className="text-lg">Joined: <span className="font-medium">{formattedDate}</span></p>
+    
+        {/* Edit Profile Button */}
+        <div className="flex justify-center mb-4">
+          <button
+            onClick={handleEditClick}
+            className="px-8 py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-300 ease-in-out hover:shadow-lg hover:glow-blue-500"
+          >
+            Edit Profile
+          </button>
+        </div>
+    
+        {/* Edit Profile Form */}
+        {isEditing && (
+          <form onSubmit={handleSubmit} className="space-y-6 bg-gray-100 dark:bg-gray-800 p-8 rounded-xl shadow-xl text-white ">
+            <div>
+              <label htmlFor="firstName" className="block text-gray-900 dark:text-gray-100 text-xl">First Name</label>
+              <input
+                id="firstName"
+                name="firstName"
+                type="text"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                className="w-96 px-5 py-3 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-teal-500 transition-all duration-300 hover:shadow-lg"
+              />
+            </div>
+            <div>
+              <label htmlFor="lastName" className="block text-xl text-gray-900 dark:text-gray-100">Last Name</label>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                className="w-96 px-5 py-3 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-teal-500 transition-all duration-300 hover:shadow-lg"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-xl text-gray-900 dark:text-gray-100">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-96 px-5 py-3 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-teal-500 transition-all duration-300 hover:shadow-lg"
+              />
+            </div>
+    
+            <div className="flex justify-between mt-8">
+              <button
+                type="submit"
+                className="px-8 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 hover:shadow-lg hover:glow-blue-500"
+              >
+                Save Changes
+              </button>
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="px-8 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-300 hover:shadow-lg"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+    
+        {/* Toast Notifications */}
+        <Toaster position="top-right" reverseOrder={false} />
       </div>
-
-      {/* Edit Profile Button */}
-      <div className="flex justify-center mb-6">
-        <button
-          onClick={handleEditClick}
-          className="px-6 py-3 bg-teal-500 text-white rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-300 ease-in-out transform hover:scale-105"
-        >
-          Edit Profile
-        </button>
-      </div>
-
-      {/* Edit Profile Form */}
-      {isEditing && (
-        <form onSubmit={handleSubmit} className="space-y-4 bg-gray-800 p-6 rounded-xl shadow-xl text-white transition-all duration-500 ease-in-out transform hover:scale-105">
-          <div>
-            <label htmlFor="firstName" className="block text-lg">First Name</label>
-            <input
-              id="firstName"
-              name="firstName"
-              type="text"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
-            />
-          </div>
-          <div>
-            <label htmlFor="lastName" className="block text-lg">Last Name</label>
-            <input
-              id="lastName"
-              name="lastName"
-              type="text"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
-            />
-          </div>
-          <div>
-            <label htmlFor="email" className="block text-lg">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
-            />
-          </div>
-
-          <div className="flex justify-between mt-6">
-            <button
-              type="submit"
-              className="px-6 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              Save Changes
-            </button>
-            <button
-              type="button"
-              onClick={handleCancelEdit}
-              className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      )}
-
-      {/* Toaster Component for toast notifications */}
-      <Toaster position="top-right" reverseOrder={false} containerStyle={{ marginTop: "50px" }} />
-    </div>
-  );
-}
+    );
+  }    

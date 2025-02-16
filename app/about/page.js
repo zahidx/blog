@@ -75,7 +75,7 @@ export default function About() {
       </section>
 
       {/* Contact Section */}
-      <section className="py-24 px-6 md:px-20 bg-gradient-to-b from-[#380643] to-[#0E1628]" data-aos="fade-up" data-aos-delay="3000">
+      <section className="py-24 px-6 md:px-20 bg-gradient-to-b from-[#380643] to-[#0E1628]" data-aos="fade-up" data-aos-delay="1000">
         <h2 className="text-4xl font-semibold text-center text-yellow-400 mb-12" data-aos="fade-in">
           Let's Connect
         </h2>
@@ -84,7 +84,7 @@ export default function About() {
             href="mailto:your-email@example.com"
             className="text-yellow-400 transform hover:scale-110 transition duration-300"
             data-aos="fade-in"
-            data-aos-delay="3500"
+            data-aos-delay="500"
           >
             <FaEnvelope />
           </a>
@@ -93,7 +93,7 @@ export default function About() {
             target="_blank"
             className="text-gray-400 dark:text-gray-300 transform hover:scale-110 transition duration-300"
             data-aos="fade-in"
-            data-aos-delay="3600"
+            data-aos-delay="500"
           >
             <FaGithub />
           </a>
@@ -102,7 +102,7 @@ export default function About() {
             target="_blank"
             className="text-blue-500 dark:text-blue-400 transform hover:scale-110 transition duration-300"
             data-aos="fade-in"
-            data-aos-delay="3700"
+            data-aos-delay="500"
           >
             <FaLinkedin />
           </a>

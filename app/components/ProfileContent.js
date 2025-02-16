@@ -8,11 +8,13 @@ import { FaSignOutAlt, FaChartBar, FaUsers, FaCog, FaSun, FaMoon } from 'react-i
 import { Line } from 'react-chartjs-2';
 import { Toaster, toast } from 'react-hot-toast';
 import 'chart.js/auto';
+import CuteLoader from "./CuteLoader";
 
 export default function AdvancedDashboard() {
   const [user, setUser] = useState(null);
   const [theme, setTheme] = useState('dark');
   const [chartData, setChartData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchUserData = useCallback(async () => {
     try {
@@ -44,6 +46,14 @@ export default function AdvancedDashboard() {
     return () => unsubscribe();
   }, [fetchUserData]);
 
+  // add loader
+  useEffect(() => {
+    // Simulating data fetching or any async task
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Replace with your actual async logic
+  }, []);
+
   useEffect(() => {
     setChartData({
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -73,12 +83,16 @@ export default function AdvancedDashboard() {
   if (!user) {
     return (
       <div className="text-center py-10 text-gray-500 dark:text-gray-300">
-        <p className="text-xl">Please log in to access the dashboard.</p>
+        <p className="text-xl"></p>
       </div>
     );
   }
 
   return (
+    <div>
+      {isLoading ? (
+        <CuteLoader /> // Show loader while loading
+      ) : (
     <div className={`min-h-screen bg-gray-100 dark:bg-[#121212] text-gray-900 dark:text-white`}>
       {/* Top Navigation Bar */}
       <header className="flex justify-between items-center p-6 bg-white dark:bg-gray-800 shadow-lg">
@@ -126,6 +140,8 @@ export default function AdvancedDashboard() {
       </div>
 
       <Toaster position="top-right" />
+    </div>
+      )}
     </div>
   );
 }

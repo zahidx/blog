@@ -86,7 +86,7 @@ const DashboardContent = () => {
       legend: { position: "right", labels: { font: { size: 14 } } },
       title: {
         display: true,
-        text: "Posts per Category", // Title for the ring
+        text: "", // Title for the ring
         font: { size: 16 },
       },
     },
@@ -128,7 +128,7 @@ const DashboardContent = () => {
             {/* Right Side: Ring Chart */}
             <div className="w-1/3">
               <h3 className="text-2xl font-bold dark:text-white text-left">
-                Category Distribution
+              📶Posts per Category
               </h3>
               <div className="mr-4" style={{ width: "380px", height: "380px" }}>
                 <Doughnut

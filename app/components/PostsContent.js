@@ -4,10 +4,12 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { app } from '../components/firebaseConfig';
 import EditModal from './EditModal';
 import DeleteModal from './DeleteModal';
+import CuteLoader from "./CuteLoader";
 
 export default function DashboardContent() {
   const [userData, setUserData] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -83,6 +85,13 @@ export default function DashboardContent() {
 
     return () => unsubscribe();
   }, [fetchUserData]);
+// Loader added
+  useEffect(() => {
+    // Simulating data fetching or any async task
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Replace with your actual async logic
+  }, []);
 
   useEffect(() => {
     if (userData) {
@@ -165,6 +174,11 @@ export default function DashboardContent() {
   const { firstName, lastName } = userData;
 
   return (
+    <div>
+      {isLoading ? (
+        <CuteLoader /> // Show loader while loading
+      ) : (
+
     <div className="max-w-7xl mx-auto px-6 py-10">
       <div className="mb-12">
         <h3 className="text-4xl font-semibold text-gray-800 dark:text-white">
@@ -273,6 +287,8 @@ export default function DashboardContent() {
             </button>
           </div>
         </div>
+      )}
+    </div>
       )}
     </div>
   );

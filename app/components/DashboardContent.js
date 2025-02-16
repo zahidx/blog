@@ -11,11 +11,11 @@ import { FaLaptop, FaBed, FaHeartbeat, FaGraduationCap, FaFilm } from "react-ico
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const categories = [
-  { name: "Tech", icon: <FaLaptop size={40} color="#6366F1" /> },
-  { name: "Lifestyle", icon: <FaBed size={40} color="#8B5CF6" /> },
-  { name: "Health", icon: <FaHeartbeat size={40} color="#EC4899" /> },
-  { name: "Education", icon: <FaGraduationCap size={40} color="#F59E0B" /> },
-  { name: "Entertainment", icon: <FaFilm size={40} color="#10B981" /> },
+  { name: "Tech", icon: <FaLaptop size={50} color="#6366F1" /> },
+  { name: "Lifestyle", icon: <FaBed size={50} color="#8B5CF6" /> },
+  { name: "Health", icon: <FaHeartbeat size={50} color="#EC4899" /> },
+  { name: "Education", icon: <FaGraduationCap size={50} color="#F59E0B" /> },
+  { name: "Entertainment", icon: <FaFilm size={50} color="#10B981" /> },
 ];
 
 const DashboardContent = () => {
@@ -130,7 +130,7 @@ const DashboardContent = () => {
               <h3 className="text-2xl font-bold dark:text-white text-left">
                 Category Distribution
               </h3>
-              <div style={{ width: "380px", height: "380px" }}>
+              <div className="mr-4" style={{ width: "380px", height: "380px" }}>
                 <Doughnut
                   ref={chartRef}
                   data={doughnutData}

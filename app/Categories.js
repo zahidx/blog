@@ -3,7 +3,7 @@ import { FaLaptopCode, FaHeart, FaGraduationCap } from 'react-icons/fa'; // Impo
 
 const Categories = () => {
   return (
-    <section id="categories" className="py-16 bg-[#e7f8f3] dark:bg-gray-900">
+    <section id="categories" className="py-20 bg-[#e7f8f3] dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-6">
         <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">Browse by Category</h2>
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">

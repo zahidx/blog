@@ -25,14 +25,17 @@ const HomePage = () => {
           >
             Explore captivating stories, insightful posts, and creative ideas from our vibrant community of writers.
           </motion.p>
-          <motion.button
-            className="mt-6 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-lg rounded-full shadow-lg focus:outline-none transform transition duration-300 ease-in-out hover:scale-105 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, ease: 'easeInOut', delay: 0.6 }}
-          >
-            Start Reading
-          </motion.button>
+          <a href="#categories">
+  <motion.button
+    className="mt-6 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-lg rounded-full shadow-lg focus:outline-none transform transition duration-300 ease-in-out hover:scale-105 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+    initial={{ y: 20, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    transition={{ duration: 0.8, ease: 'easeInOut', delay: 0.6 }}
+  >
+    Start Reading
+  </motion.button>
+</a>
+
         </div>
       </section>
 

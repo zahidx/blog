@@ -6,16 +6,16 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { motion } from "framer-motion";
-import { FaLaptop, FaBed, FaHeartbeat, FaGraduationCap, FaFilm } from "react-icons/fa";  // Importing icons
+import { FaLaptop, FaBed, FaHeartbeat, FaGraduationCap, FaFilm } from "react-icons/fa";  
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const categories = [
-  { name: "Tech", icon: <FaLaptop size={50} color="#6366F1" /> },
-  { name: "Lifestyle", icon: <FaBed size={50} color="#8B5CF6" /> },
-  { name: "Health", icon: <FaHeartbeat size={50} color="#EC4899" /> },
-  { name: "Education", icon: <FaGraduationCap size={50} color="#F59E0B" /> },
-  { name: "Entertainment", icon: <FaFilm size={50} color="#10B981" /> },
+  { name: "Tech", icon: <FaLaptop size={40} color="#6366F1" /> },
+  { name: "Lifestyle", icon: <FaBed size={40} color="#8B5CF6" /> },
+  { name: "Health", icon: <FaHeartbeat size={40} color="#EC4899" /> },
+  { name: "Education", icon: <FaGraduationCap size={40} color="#F59E0B" /> },
+  { name: "Entertainment", icon: <FaFilm size={40} color="#10B981" /> },
 ];
 
 const DashboardContent = () => {
@@ -24,7 +24,6 @@ const DashboardContent = () => {
   const [posts, setPosts] = useState([]);
   const chartRef = useRef(null);
 
-  // Fetch overall counts
   useEffect(() => {
     (async () => {
       const snapshot = await getDocs(collection(db, "posts"));
@@ -39,16 +38,13 @@ const DashboardContent = () => {
     })();
   }, []);
 
-  // Fetch posts for a selected category
   const fetchPostsByCategory = async (category) => {
     const q = query(collection(db, "posts"), where("category", "==", category));
     const snapshot = await getDocs(q);
-    const postsArray = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    setPosts(postsArray);
+    setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     setSelectedCategory(category);
   };
 
-  // Handle chart segment click
   const handleChartClick = (event) => {
     if (!chartRef.current) return;
     const chart = chartRef.current;
@@ -81,61 +77,49 @@ const DashboardContent = () => {
     responsive: true,
     maintainAspectRatio: false,
     cutout: "70%",
-    rotation: Math.PI * 1.5, // Start the chart from the top
+    rotation: Math.PI * 1.5,
     plugins: {
       legend: { position: "right", labels: { font: { size: 14 } } },
-      title: {
-        display: true,
-        text: "", // Title for the ring
-        font: { size: 16 },
-      },
+      title: { display: true, text: "", font: { size: 16 } },
     },
     onClick: handleChartClick,
   };
 
   return (
-    <div className="dark:bg-[#1E293B] p-8 rounded-lg shadow-xl">
+    <div className="dark:bg-[#1E293B] p-6 md:p-8 rounded-lg shadow-xl">
       {!selectedCategory ? (
         <>
-          <h2 className="text-3xl font-bold dark:text-white pb-6">Dashboard</h2>
+          <h2 className="text-2xl md:text-3xl font-bold dark:text-white pb-4">Dashboard</h2>
 
-          {/* Flex container to align both cards and ring in the same row */}
-          <div className="flex justify-between items-start">
-            {/* Left Side: 2x2 Grid for Category Cards */}
-            <div className="w-1/2 pr-4">
-              <div className="grid grid-cols-2 gap-6">
-                {categories.map((category) => (
-                  <motion.div
-                    key={category.name}
-                    onClick={() => fetchPostsByCategory(category.name)}
-                    className="cursor-pointer bg-white dark:bg-[#2F3A47] shadow-lg rounded-xl p-6 border border-gray-200 hover:shadow-2xl transform hover:scale-105 transition duration-300"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <div className="flex justify-center mb-4">
-                      {category.icon}
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white text-center">
-                      {category.name}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-center">
-                      Posts: <span className="font-bold">{counts[category.name] || 0}</span>
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
+          <div className="flex flex-col md:flex-row justify-between items-center md:items-start">
+            
+            {/* Left Side - Cards */}
+            <div className="w-full md:w-1/2 grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6">
+              {categories.map((category) => (
+                <motion.div
+                  key={category.name}
+                  onClick={() => fetchPostsByCategory(category.name)}
+                  className="cursor-pointer bg-white dark:bg-[#2F3A47] shadow-md rounded-lg p-4 border border-gray-200 hover:shadow-xl transform hover:scale-105 transition duration-300"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <div className="flex justify-center">{category.icon}</div>
+                  <h3 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white text-center mt-2">
+                    {category.name}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-center">
+                    Posts: <span className="font-bold">{counts[category.name] || 0}</span>
+                  </p>
+                </motion.div>
+              ))}
             </div>
 
-            {/* Right Side: Ring Chart */}
-            <div className="w-1/3">
-              <h3 className="text-2xl font-bold dark:text-white text-left">
-              📶Posts per Category
+            {/* Right Side - Chart */}
+            <div className="w-full md:w-1/2 flex flex-col items-center mt-6 md:mt-0">
+              <h3 className="text-lg md:text-2xl font-bold dark:text-white mb-4">
+                📶 Posts per Category
               </h3>
-              <div className="mr-4" style={{ width: "380px", height: "380px" }}>
-                <Doughnut
-                  ref={chartRef}
-                  data={doughnutData}
-                  options={doughnutOptions}
-                />
+              <div className="w-full max-w-xs md:max-w-sm h-auto">
+                <Doughnut ref={chartRef} data={doughnutData} options={doughnutOptions} />
               </div>
             </div>
           </div>
@@ -146,12 +130,12 @@ const DashboardContent = () => {
         </>
       ) : (
         <div>
-          <h3 className="text-2xl font-bold dark:text-white mb-6">
+          <h3 className="text-xl md:text-2xl font-bold dark:text-white mb-4">
             Posts in <span className="text-indigo-500">{selectedCategory}</span>
           </h3>
           <button
             onClick={() => setSelectedCategory(null)}
-            className="mb-6 px-6 py-2 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600"
+            className="mb-6 px-4 py-2 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600 transition duration-300"
           >
             Back
           </button>
@@ -162,9 +146,7 @@ const DashboardContent = () => {
                   {post.title || "No title"}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {post.content
-                    ? post.content.slice(0, 50) + "..."
-                    : "No content"}
+                  {post.content ? post.content.slice(0, 50) + "..." : "No content"}
                 </p>
               </li>
             ))}

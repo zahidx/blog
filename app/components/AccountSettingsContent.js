@@ -167,64 +167,63 @@ export default function DashboardContent() {
             Edit Profile
           </button>
         </div>
-    
-        {/* Edit Profile Form */}
-        {isEditing && (
-          <form onSubmit={handleSubmit} className="space-y-6 bg-gray-100 dark:bg-gray-800 p-8 rounded-xl shadow-xl text-white ">
-            <div>
-              <label htmlFor="firstName" className="block text-gray-900 dark:text-gray-100 text-xl">First Name</label>
-              <input
-                id="firstName"
-                name="firstName"
-                type="text"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                className="w-96 px-5 py-3 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-teal-500 transition-all duration-300 hover:shadow-lg"
-              />
-            </div>
-            <div>
-              <label htmlFor="lastName" className="block text-xl text-gray-900 dark:text-gray-100">Last Name</label>
-              <input
-                id="lastName"
-                name="lastName"
-                type="text"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                className="w-96 px-5 py-3 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-teal-500 transition-all duration-300 hover:shadow-lg"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-xl text-gray-900 dark:text-gray-100">Email</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-96 px-5 py-3 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-teal-500 transition-all duration-300 hover:shadow-lg"
-              />
-            </div>
-    
-            <div className="flex justify-between mt-8">
-              <button
-                type="submit"
-                className="px-8 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 hover:shadow-lg hover:glow-blue-500"
-              >
-                Save Changes
-              </button>
-              <button
-                type="button"
-                onClick={handleCancelEdit}
-                className="px-8 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-300 hover:shadow-lg"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        )}
-    
-        {/* Toast Notifications */}
-        <Toaster position="top-right" reverseOrder={false} />
-      </div>
-    );
-  }    
+
+{isEditing && (
+  <form onSubmit={handleSubmit} className="space-y-6 bg-gray-100 dark:bg-gray-800 p-4 sm:p-8 rounded-xl shadow-xl text-white w-full max-w-md mx-auto">
+    <div>
+      <label htmlFor="firstName" className="block text-gray-900 dark:text-gray-100 text-lg sm:text-xl">First Name</label>
+      <input
+        id="firstName"
+        name="firstName"
+        type="text"
+        value={formData.firstName}
+        onChange={handleInputChange}
+        className="w-full px-4 py-3 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-teal-500 transition-all duration-300 hover:shadow-lg"
+      />
+    </div>
+    <div>
+      <label htmlFor="lastName" className="block text-lg sm:text-xl text-gray-900 dark:text-gray-100">Last Name</label>
+      <input
+        id="lastName"
+        name="lastName"
+        type="text"
+        value={formData.lastName}
+        onChange={handleInputChange}
+        className="w-full px-4 py-3 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-teal-500 transition-all duration-300 hover:shadow-lg"
+      />
+    </div>
+    <div>
+      <label htmlFor="email" className="block text-lg sm:text-xl text-gray-900 dark:text-gray-100">Email</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        value={formData.email}
+        onChange={handleInputChange}
+        className="w-full px-4 py-3 mt-2 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-teal-500 transition-all duration-300 hover:shadow-lg"
+      />
+    </div>
+    <div className="flex flex-wrap gap-4 justify-between mt-8">
+      <button
+        type="submit"
+        className="w-full sm:w-auto px-6 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 hover:shadow-lg"
+      >
+        Save Changes
+      </button>
+      <button
+        type="button"
+        onClick={handleCancelEdit}
+        className="w-full sm:w-auto px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-300 hover:shadow-lg"
+      >
+        Cancel
+      </button>
+    </div>
+  </form>
+)}
+
+{/* Toast Notifications */}
+<Toaster position="top-right" reverseOrder={false} />
+
+</div>
+  );
+}

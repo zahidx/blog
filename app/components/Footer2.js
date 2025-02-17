@@ -12,7 +12,7 @@ const Footer = () => {
   {/* Quick Links */}
   <div className="flex justify-between items-center w-full">
   {/* Quick Links */}
-  <div className="w-full pl-40 md:w-1/4 text-center md:text-left">
+  <div className="w-full pl-0 sm:pl-40 md:w-1/4 text-center md:text-left">
     <h4 className="text-lg font-semibold text-yellow-400">Links</h4>
     <ul className="space-y-2 text-gray-400">
       <li><Link href="/about" className="hover:text-yellow-400">About</Link></li>

@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
         <FirebaseProvider> {/* Wrap the app with FirebaseProvider */}
           <Navbar />
           {children}
-          <Footer />
+          {/* <Footer /> */}
         </FirebaseProvider>
       </body>
     </html>

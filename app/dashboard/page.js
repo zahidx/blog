@@ -9,6 +9,7 @@ import PostsContent from '../components/PostsContent';
 import ProfileContent from '../components/ProfileContent';
 import AccountSettingsContent from '../components/AccountSettingsContent';
 import ManagePostsContent from '../components/ManagePostsContent';
+import Footer2 from '../components/Footer2';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('profile');
@@ -66,13 +67,18 @@ export default function Dashboard() {
         </nav>
         <LogoutButton onLogout={handleLogout} />
       </aside>
+      
 
       {/* Main Content */}
       <main className="pt-16 flex-1 ml-48 p-6 bg-white dark:bg-gray-900 overflow-y-auto h-screen">
         {renderContent()}
+        <Footer2 />
       </main>
+     
     </div>
+    
   );
+  
 }
 
 // Sidebar Navigation Item Component

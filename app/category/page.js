@@ -1,93 +1,109 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaLaptopCode, FaCamera, FaPaintBrush, FaMusic, FaBook } from "react-icons/fa";
-import "animate.css";
+import { db } from '../components/firebaseConfig'; // Import your Firebase configuration
+import { collection, getDocs, query, where } from "firebase/firestore"; // Firebase Firestore imports
 
+import "animate.css";
+import CuteLoader from "../components/CuteLoader"; 
+
+// Define the categoriesData structure
 const categoriesData = [
   {
     id: 1,
-    title: "Technology",
+    title: "Tech",
     icon: <FaLaptopCode />,
     description: "Explore the latest trends and tutorials in tech.",
-    postsCount: 25,
     bgColor: "bg-gradient-to-r from-blue-500 to-purple-500",
   },
   {
     id: 2,
-    title: "Photography",
+    title: "Lifestyle",
     icon: <FaCamera />,
-    description: "Discover stunning photos and photography tips.",
-    postsCount: 18,
+    description: "Discover stunning photos and lifestyle tips.",
     bgColor: "bg-gradient-to-r from-teal-400 to-green-500",
   },
   {
     id: 3,
-    title: "Art & Design",
+    title: "Health",
     icon: <FaPaintBrush />,
     description: "Unleash creativity with inspiring design content.",
-    postsCount: 30,
     bgColor: "bg-gradient-to-r from-red-400 to-pink-500",
   },
   {
     id: 4,
-    title: "Music",
+    title: "Education",
     icon: <FaMusic />,
-    description: "Dive into the world of music and audio production.",
-    postsCount: 15,
+    description: "Dive into the world of education and learning.",
     bgColor: "bg-gradient-to-r from-yellow-400 to-orange-500",
   },
   {
     id: 5,
-    title: "Books",
+    title: "Entertainment",
     icon: <FaBook />,
     description: "Read reviews and insights from book lovers.",
-    postsCount: 22,
     bgColor: "bg-gradient-to-r from-gray-600 to-black",
   },
 ];
 
 export default function CategoryPage() {
-  const [search, setSearch] = useState("");
-  const filteredCategories = categoriesData.filter((category) =>
-    category.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const [categoriesDataWithPosts, setCategoriesDataWithPosts] = useState([]);
+  const [isPremium, setIsPremium] = useState(false); // State to track premium experience
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch categories and posts count dynamically from Firestore
+  useEffect(() => {
+    const fetchCategoriesWithPostCount = async () => {
+      const categoriesWithPostCount = [];
+
+      for (let category of categoriesData) {
+        // Query Firestore to count posts for each category
+        const postsRef = collection(db, "posts");
+        const q = query(postsRef, where("category", "==", category.title));
+        const querySnapshot = await getDocs(q);
+        const postCount = querySnapshot.size; // Get the number of posts for this category
+
+        // Add post count to category data
+        categoriesWithPostCount.push({
+          ...category,
+          postsCount: postCount,
+        });
+      }
+
+      setCategoriesDataWithPosts(categoriesWithPostCount);
+    };
+
+    // Check local storage for the premium user flag
+    const premiumUser = localStorage.getItem("isPremium") === "true";
+    setIsPremium(premiumUser);
+
+    fetchCategoriesWithPostCount();
+  }, []);
+
+  const handlePremiumUpgrade = () => {
+    localStorage.setItem("isPremium", "true");
+    setIsPremium(true);
+  };
+
+  useEffect(() => {
+    // Simulating data fetching or any async task
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000); // Replace with your actual async logic
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#0E1628] to-[#380643]  dark:bg-gradient-to-br dark:from-[#0f2027] dark:via-[#203a43] dark:to-[#2c5364] text-gray-800 dark:text-white transition-colors duration-300">
-
-{/* Header Section */}
-<header className="text-center py-16">
-        <h1 className="text-6xl font-extrabold bg-gradient-to-r from-yellow-400 to-yellow-600 text-transparent bg-clip-text animate__animated animate__fadeInDown">
-          CateGories
-        </h1>
-        <p className="text-xl text-gray-200 dark:text-gray-300 mt-4 max-w-3xl mx-auto animate__animated animate__fadeIn animate__delay-1s">
-          Browse through various categories and find blogs tailored to your interests.
-        </p>
-      </header>
-
-
-
-
-
-      {/* Search Bar */}
-      <div className="flex justify-center px-4 py-6">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-2xl p-4 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-white shadow-lg focus:ring-yellow-400 focus:border-yellow-400 transition-colors duration-300"
-          placeholder="Search categories..."
-        />
-      </div>
+    
+    <div className={`min-h-screen ${isPremium ? "bg-gradient-to-r from-blue-800 to-blue-900" : "bg-gradient-to-r from-[#0E1628] to-[#380643]"} dark:bg-gradient-to-br dark:from-[#0f2027] dark:via-[#203a43] dark:to-[#2c5364] text-gray-800 dark:text-white transition-colors duration-300`}>
 
       {/* Trending Categories */}
-      <section className="px-6 py-8 ">
-        <h2 className="text-4xl font-bold text-center text-yellow-500 dark:text-yellow-400 mb-6">
+      <section className="px-6 py-8">
+        <h2 className={`text-4xl font-bold mt-20 text-center ${isPremium ? "text-yellow-500" : "text-yellow-500"} mb-6`}>
           Trending Categories
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-          {categoriesData.slice(0, 4).map((category) => (
+          {categoriesDataWithPosts.slice(0, 4).map((category) => (
             <div
               key={category.id}
               className={`${category.bgColor} p-6 rounded-lg shadow-lg text-white transform hover:scale-105 transition-all duration-300`}
@@ -106,12 +122,12 @@ export default function CategoryPage() {
       </section>
 
       {/* All Categories */}
-      <section className="px-6 py-16 bg-gradient-to-r from-[#0E1628] to-[#380643]  dark:bg-gray-900 transition-colors duration-300">
-        <h2 className="text-4xl font-bold text-center text-yellow-500 dark:text-yellow-400 mb-10">
+      <section className="px-6 py-16 bg-gradient-to-r from-[#0E1628] to-[#380643] dark:bg-gray-900 transition-colors duration-300">
+        <h2 className={`text-4xl font-bold text-center ${isPremium ? "text-yellow-500" : "text-yellow-500"} mb-10`}>
           Explore All Categories
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto ">
-          {filteredCategories.map((category) => (
+          {categoriesDataWithPosts.map((category) => (
             <div
               key={category.id}
               className="p-6 text-gray-50 rounded-lg shadow-lg bg-[#374151] dark:bg-gray-800 transition-colors duration-300"

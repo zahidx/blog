@@ -99,12 +99,13 @@ export default function Navbar() {
 
           {/* Right-side buttons */}
           <div className="flex items-center">
-            <button
-              onClick={toggleModal}
-              className="ml-4 text-lg font-medium flex items-center gap-2 cursor-pointer transition hover:bg-gray-700 px-4 py-2 rounded-md"
-            >
-              Join Now
-            </button>
+           <button
+  onClick={toggleModal}
+  className="hidden sm:flex ml-4 mr-6 text-lg font-medium items-center gap-2 cursor-pointer transition hover:bg-gray-700 px-4 py-2 rounded-md"
+>
+  Join Now
+</button>
+
 
             {/* Dark mode toggler for desktop */}
             <button
@@ -122,7 +123,7 @@ export default function Navbar() {
             <div className="md:hidden">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 mr-6 rounded-md text-white hover:bg-purple-700 transition focus:outline-none"
+                className="p-2 mr-12 rounded-md text-white hover:bg-purple-700 transition focus:outline-none"
               >
                 {isOpen ? (
                   <XMarkIcon className="h-6 w-6" />
@@ -167,6 +168,16 @@ export default function Navbar() {
                 Contact
               </span>
             </Link>
+
+            <button
+              onClick={toggleModal}
+              className="ml-4 text-lg bg-gray-600 font-medium flex items-center gap-2 cursor-pointer transition hover:bg-gray-700 px-4 py-2 rounded-md"
+            >
+              Join Now
+            </button>
+
+
+
             {/* Dark mode toggler for mobile */}
             <button
               onClick={toggleDarkMode}

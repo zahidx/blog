@@ -123,7 +123,7 @@ export default function Navbar() {
             <div className="md:hidden">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 mr-12 rounded-md text-white hover:bg-purple-700 transition focus:outline-none"
+                className="p-2 mr-2 rounded-md text-white hover:bg-purple-700 transition focus:outline-none"
               >
                 {isOpen ? (
                   <XMarkIcon className="h-6 w-6" />

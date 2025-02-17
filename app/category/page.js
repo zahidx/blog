@@ -94,65 +94,78 @@ export default function CategoryPage() {
   }, []);
 
   return (
-    
-    <div className={`min-h-screen ${isPremium ? "bg-gradient-to-r from-blue-800 to-blue-900" : "bg-gradient-to-r from-[#0E1628] to-[#380643]"} dark:bg-gradient-to-br dark:from-[#0f2027] dark:via-[#203a43] dark:to-[#2c5364] text-gray-800 dark:text-white transition-colors duration-300`}>
-
-      {/* Trending Categories */}
-      <section className="px-6 py-8">
-        <h2 className={`text-4xl font-bold mt-20 text-center ${isPremium ? "text-yellow-500" : "text-yellow-500"} mb-6`}>
-          Trending Categories
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-          {categoriesDataWithPosts.slice(0, 4).map((category) => (
-            <div
-              key={category.id}
-              className={`${category.bgColor} p-6 rounded-lg shadow-lg text-white transform hover:scale-105 transition-all duration-300`}
+    <div
+      className={`min-h-screen ${
+        isPremium ? "bg-gradient-to-r from-blue-800 to-blue-900" : "bg-gradient-to-r from-[#0E1628] to-[#380643]"
+      } dark:bg-gradient-to-br dark:from-[#0f2027] dark:via-[#203a43] dark:to-[#2c5364] text-gray-800 dark:text-white transition-colors duration-300`}
+    >
+      {/* Loading Section */}
+      {isLoading ? (
+        <CuteLoader />
+      ) : (
+        <>
+          {/* Trending Categories */}
+          <section className="px-6 py-8">
+            <h2
+              className={`text-4xl font-bold mt-20 text-center ${isPremium ? "text-yellow-500" : "text-yellow-500"} mb-6`}
             >
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-5xl">{category.icon}</span>
-                <span className="text-xl font-bold bg-white text-gray-900 px-3 py-1 rounded-lg shadow">
-                  {category.postsCount} Posts
-                </span>
-              </div>
-              <h3 className="text-3xl font-extrabold mb-2">{category.title}</h3>
-              <p className="text-lg opacity-90">{category.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* All Categories */}
-      <section className="px-6 py-16 bg-gradient-to-r from-[#0E1628] to-[#380643] dark:bg-gray-900 transition-colors duration-300">
-        <h2 className={`text-4xl font-bold text-center ${isPremium ? "text-yellow-500" : "text-yellow-500"} mb-10`}>
-          Explore All Categories
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto ">
-          {categoriesDataWithPosts.map((category) => (
-            <div
-              key={category.id}
-              className="p-6 text-gray-50 rounded-lg shadow-lg bg-[#374151] dark:bg-gray-800 transition-colors duration-300"
-            >
-              <div className="flex items-center mb-4">
-                <span className="text-5xl text-yellow-500 dark:text-yellow-400">
-                  {category.icon}
-                </span>
-                <div className="ml-4">
-                  <h3 className="text-2xl font-bold">{category.title}</h3>
-                  <p className="text-sm text-gray-50 dark:text-gray-300">
-                    {category.postsCount} Posts
-                  </p>
+              Trending Categories
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+              {categoriesDataWithPosts.slice(0, 4).map((category) => (
+                <div
+                  key={category.id}
+                  className={`${category.bgColor} p-6 rounded-lg shadow-lg text-white transform hover:scale-105 transition-all duration-300`}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-5xl">{category.icon}</span>
+                    <span className="text-xl font-bold bg-white text-gray-900 px-3 py-1 rounded-lg shadow">
+                      {category.postsCount} Posts
+                    </span>
+                  </div>
+                  <h3 className="text-3xl font-extrabold mb-2">{category.title}</h3>
+                  <p className="text-lg opacity-90">{category.description}</p>
                 </div>
-              </div>
-              <p className="text-gray-50 dark:text-gray-300 mb-4">
-                {category.description}
-              </p>
-              <button className="py-2 px-4 rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold hover:to-yellow-700 hover:scale-105 transition-all duration-300 shadow-lg dark:bg-gradient-to-r dark:from-blue-800 dark:to-blue-900 dark:hover:to-blue-700">
-                View Posts
-              </button>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          </section>
+
+          {/* All Categories */}
+          <section className="px-6 py-16 bg-gradient-to-r from-[#0E1628] to-[#380643] dark:bg-gray-900 transition-colors duration-300">
+            <h2
+              className={`text-4xl font-bold text-center ${isPremium ? "text-yellow-500" : "text-yellow-500"} mb-10`}
+            >
+              Explore All Categories
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+              {categoriesDataWithPosts.map((category) => (
+                <div
+                  key={category.id}
+                  className="p-6 text-gray-50 rounded-lg shadow-lg bg-[#374151] dark:bg-gray-800 transition-colors duration-300"
+                >
+                  <div className="flex items-center mb-4">
+                    <span className="text-5xl text-yellow-500 dark:text-yellow-400">
+                      {category.icon}
+                    </span>
+                    <div className="ml-4">
+                      <h3 className="text-2xl font-bold">{category.title}</h3>
+                      <p className="text-sm text-gray-50 dark:text-gray-300">
+                        {category.postsCount} Posts
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-gray-50 dark:text-gray-300 mb-4">
+                    {category.description}
+                  </p>
+                  <button className="py-2 px-4 rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold hover:to-yellow-700 hover:scale-105 transition-all duration-300 shadow-lg dark:bg-gradient-to-r dark:from-blue-800 dark:to-blue-900 dark:hover:to-blue-700">
+                    View Posts
+                  </button>
+                </div>
+              ))}
+            </div>
+          </section>
+        </>
+      )}
     </div>
   );
 }

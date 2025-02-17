@@ -72,7 +72,10 @@ export default function Home() {
                           : `${post.content.substring(0, 100)}...`
                         : "No content available."}
                     </p>
-                    <p className="mt-2 text-sm text-gray-500">By {post.author || "Unknown"} - {post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleDateString() : "Unknown date"}</p>
+                    <p className="mt-2 text-sm text-gray-500">
+                      By {post.author || "Unknown"} -{" "}
+                      {post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleDateString() : "Unknown date"}
+                    </p>
                     <button
                       onClick={() => toggleDescription(post.id)}
                       className="mt-4 text-indigo-600 hover:underline"

@@ -54,7 +54,7 @@ const categoriesData = [
 export default function CategoryPage() {
   const [categoriesDataWithPosts, setCategoriesDataWithPosts] = useState([]);
   const [isPremium, setIsPremium] = useState(false); // State to track premium experience
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Loading state for fetching data
 
   // Fetch categories and posts count dynamically from Firestore
   useEffect(() => {
@@ -76,6 +76,7 @@ export default function CategoryPage() {
       }
 
       setCategoriesDataWithPosts(categoriesWithPostCount);
+      setIsLoading(false); // Set loading to false after fetching data
     };
 
     // Check local storage for the premium user flag
@@ -83,19 +84,12 @@ export default function CategoryPage() {
     setIsPremium(premiumUser);
 
     fetchCategoriesWithPostCount();
-  }, []);
+  }, []); // Run the effect once when the component mounts
 
   const handlePremiumUpgrade = () => {
     localStorage.setItem("isPremium", "true");
     setIsPremium(true);
   };
-
-  useEffect(() => {
-    // Simulating data fetching or any async task
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000); // Replace with your actual async logic
-  }, []);
 
   return (
     <div
@@ -105,7 +99,7 @@ export default function CategoryPage() {
     >
       {/* Loading Section */}
       {isLoading ? (
-        <CuteLoader />
+        <CuteLoader /> // Show loader while fetching data
       ) : (
         <>
           {/* Trending Categories */}
@@ -137,38 +131,37 @@ export default function CategoryPage() {
 
           {/* All Categories */}
           <section className="px-6 py-16 bg-gradient-to-r from-[#0E1628] to-[#380643] dark:bg-gray-900 transition-colors duration-300 text-center">
-  <h2
-    className={`text-4xl font-bold ${isPremium ? "text-yellow-500" : "text-yellow-500"} mb-10`}
-  >
-    Explore All Categories
-  </h2>
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-    {categoriesDataWithPosts.map((category) => (
-      <Link key={category.id} href={category.link}>
-        <div className="p-6 text-gray-50 rounded-lg shadow-lg bg-[#374151] dark:bg-gray-800 transition-colors duration-300">
-          <div className="flex items-center justify-center mb-4">
-            <span className="text-5xl text-yellow-500 dark:text-yellow-400">
-              {category.icon}
-            </span>
-            <div className="ml-4 text-center">
-              <h3 className="text-2xl font-bold">{category.title}</h3>
-              <p className="text-sm text-gray-50 dark:text-gray-300">
-                {category.postsCount} Posts
-              </p>
+            <h2
+              className={`text-4xl font-bold ${isPremium ? "text-yellow-500" : "text-yellow-500"} mb-10`}
+            >
+              Explore All Categories
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+              {categoriesDataWithPosts.map((category) => (
+                <Link key={category.id} href={category.link}>
+                  <div className="p-6 text-gray-50 rounded-lg shadow-lg bg-[#374151] dark:bg-gray-800 transition-colors duration-300">
+                    <div className="flex items-center justify-center mb-4">
+                      <span className="text-5xl text-yellow-500 dark:text-yellow-400">
+                        {category.icon}
+                      </span>
+                      <div className="ml-4 text-center">
+                        <h3 className="text-2xl font-bold">{category.title}</h3>
+                        <p className="text-sm text-gray-50 dark:text-gray-300">
+                          {category.postsCount} Posts
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-gray-50 dark:text-gray-300 mb-4">
+                      {category.description}
+                    </p>
+                    <button className="py-2 px-4 rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold hover:to-yellow-700 hover:scale-105 transition-all duration-300 shadow-lg dark:bg-gradient-to-r dark:from-blue-800 dark:to-blue-900 dark:hover:to-blue-700">
+                      View Posts
+                    </button>
+                  </div>
+                </Link>
+              ))}
             </div>
-          </div>
-          <p className="text-gray-50 dark:text-gray-300 mb-4">
-            {category.description}
-          </p>
-          <button className="py-2 px-4 rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold hover:to-yellow-700 hover:scale-105 transition-all duration-300 shadow-lg dark:bg-gradient-to-r dark:from-blue-800 dark:to-blue-900 dark:hover:to-blue-700">
-            View Posts
-          </button>
-        </div>
-      </Link>
-    ))}
-  </div>
-</section>
-
+          </section>
         </>
       )}
     </div>

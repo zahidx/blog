@@ -1,10 +1,9 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { FaLaptopCode, FaCamera, FaPaintBrush, FaMusic, FaBook } from "react-icons/fa";
 import { db } from '../components/firebaseConfig'; // Import your Firebase configuration
 import { collection, getDocs, query, where } from "firebase/firestore"; // Firebase Firestore imports
-
+import Link from "next/link"; // Import Link from Next.js
 import "animate.css";
 import CuteLoader from "../components/CuteLoader"; 
 
@@ -16,6 +15,7 @@ const categoriesData = [
     icon: <FaLaptopCode />,
     description: "Explore the latest trends and tutorials in tech.",
     bgColor: "bg-gradient-to-r from-blue-500 to-purple-500",
+    link: "/tech" // Added link
   },
   {
     id: 2,
@@ -23,6 +23,7 @@ const categoriesData = [
     icon: <FaCamera />,
     description: "Discover stunning photos and lifestyle tips.",
     bgColor: "bg-gradient-to-r from-teal-400 to-green-500",
+    link: "/lifestyle" // Added link
   },
   {
     id: 3,
@@ -30,6 +31,7 @@ const categoriesData = [
     icon: <FaPaintBrush />,
     description: "Unleash creativity with inspiring design content.",
     bgColor: "bg-gradient-to-r from-red-400 to-pink-500",
+    link: "/health" // Added link
   },
   {
     id: 4,
@@ -37,6 +39,7 @@ const categoriesData = [
     icon: <FaMusic />,
     description: "Dive into the world of education and learning.",
     bgColor: "bg-gradient-to-r from-yellow-400 to-orange-500",
+    link: "/education" // Added link
   },
   {
     id: 5,
@@ -44,6 +47,7 @@ const categoriesData = [
     icon: <FaBook />,
     description: "Read reviews and insights from book lovers.",
     bgColor: "bg-gradient-to-r from-gray-600 to-black",
+    link: "/entertainment" // Added link
   },
 ];
 
@@ -113,57 +117,58 @@ export default function CategoryPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
               {categoriesDataWithPosts.slice(0, 4).map((category) => (
-                <div
-                  key={category.id}
-                  className={`${category.bgColor} p-6 rounded-lg shadow-lg text-white transform hover:scale-105 transition-all duration-300`}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-5xl">{category.icon}</span>
-                    <span className="text-xl font-bold bg-white text-gray-900 px-3 py-1 rounded-lg shadow">
-                      {category.postsCount} Posts
-                    </span>
+                <Link key={category.id} href={category.link}> {/* Wrap with Link */}
+                  <div
+                    className={`${category.bgColor} p-6 rounded-lg shadow-lg text-white transform hover:scale-105 transition-all duration-300`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-5xl">{category.icon}</span>
+                      <span className="text-xl font-bold bg-white text-gray-900 px-3 py-1 rounded-lg shadow">
+                        {category.postsCount} Posts
+                      </span>
+                    </div>
+                    <h3 className="text-3xl font-extrabold mb-2">{category.title}</h3>
+                    <p className="text-lg opacity-90">{category.description}</p>
                   </div>
-                  <h3 className="text-3xl font-extrabold mb-2">{category.title}</h3>
-                  <p className="text-lg opacity-90">{category.description}</p>
-                </div>
+                </Link>
               ))}
             </div>
           </section>
 
           {/* All Categories */}
-          <section className="px-6 py-16 bg-gradient-to-r from-[#0E1628] to-[#380643] dark:bg-gray-900 transition-colors duration-300">
-            <h2
-              className={`text-4xl font-bold text-center ${isPremium ? "text-yellow-500" : "text-yellow-500"} mb-10`}
-            >
-              Explore All Categories
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-              {categoriesDataWithPosts.map((category) => (
-                <div
-                  key={category.id}
-                  className="p-6 text-gray-50 rounded-lg shadow-lg bg-[#374151] dark:bg-gray-800 transition-colors duration-300"
-                >
-                  <div className="flex items-center mb-4">
-                    <span className="text-5xl text-yellow-500 dark:text-yellow-400">
-                      {category.icon}
-                    </span>
-                    <div className="ml-4">
-                      <h3 className="text-2xl font-bold">{category.title}</h3>
-                      <p className="text-sm text-gray-50 dark:text-gray-300">
-                        {category.postsCount} Posts
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-gray-50 dark:text-gray-300 mb-4">
-                    {category.description}
-                  </p>
-                  <button className="py-2 px-4 rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold hover:to-yellow-700 hover:scale-105 transition-all duration-300 shadow-lg dark:bg-gradient-to-r dark:from-blue-800 dark:to-blue-900 dark:hover:to-blue-700">
-                    View Posts
-                  </button>
-                </div>
-              ))}
+          <section className="px-6 py-16 bg-gradient-to-r from-[#0E1628] to-[#380643] dark:bg-gray-900 transition-colors duration-300 text-center">
+  <h2
+    className={`text-4xl font-bold ${isPremium ? "text-yellow-500" : "text-yellow-500"} mb-10`}
+  >
+    Explore All Categories
+  </h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+    {categoriesDataWithPosts.map((category) => (
+      <Link key={category.id} href={category.link}>
+        <div className="p-6 text-gray-50 rounded-lg shadow-lg bg-[#374151] dark:bg-gray-800 transition-colors duration-300">
+          <div className="flex items-center justify-center mb-4">
+            <span className="text-5xl text-yellow-500 dark:text-yellow-400">
+              {category.icon}
+            </span>
+            <div className="ml-4 text-center">
+              <h3 className="text-2xl font-bold">{category.title}</h3>
+              <p className="text-sm text-gray-50 dark:text-gray-300">
+                {category.postsCount} Posts
+              </p>
             </div>
-          </section>
+          </div>
+          <p className="text-gray-50 dark:text-gray-300 mb-4">
+            {category.description}
+          </p>
+          <button className="py-2 px-4 rounded-lg bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold hover:to-yellow-700 hover:scale-105 transition-all duration-300 shadow-lg dark:bg-gradient-to-r dark:from-blue-800 dark:to-blue-900 dark:hover:to-blue-700">
+            View Posts
+          </button>
+        </div>
+      </Link>
+    ))}
+  </div>
+</section>
+
         </>
       )}
     </div>

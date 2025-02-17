@@ -4,20 +4,19 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { db } from "./components/firebaseConfig";
-import Footer from "./components/Footer";
-import "animate.css";
 import Hero from "./Hero";
 import Categories from "./Categories";
+import PostModal from "./components/PostModal"; // Import modal component
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
-  const [expandedPostId, setExpandedPostId] = useState(null); // State to track the expanded post
+  const [selectedPost, setSelectedPost] = useState(null); // Track selected post for modal
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const postsRef = collection(db, "posts");
-        const q = query(postsRef, orderBy("createdAt", "desc"), limit(3));
+        const q = query(postsRef, orderBy("createdAt", "desc"), limit(6)); // Fetch last 6 posts
         const querySnapshot = await getDocs(q);
 
         const fetchedPosts = querySnapshot.docs.map((doc) => ({
@@ -34,13 +33,8 @@ export default function Home() {
     fetchPosts();
   }, []);
 
-  // Toggle the expanded state to show/hide full description
-  const toggleDescription = (id) => {
-    setExpandedPostId(expandedPostId === id ? null : id);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
       {/* Hero Section */}
       <Hero />
 
@@ -48,52 +42,60 @@ export default function Home() {
       <Categories />
 
       {/* Recent Posts Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center text-gray-900">Recent Posts</h2>
+          <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-gray-100">
+            Recent Posts
+          </h2>
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
             {posts.length > 0 ? (
               posts.map((post) => (
-                <div key={post.id} className="bg-white rounded-lg shadow-lg overflow-hidden group cursor-pointer">
+                <div
+                  key={post.id}
+                  className="bg-white dark:bg-gray-700 rounded-lg shadow-lg overflow-hidden group cursor-pointer transition-all duration-300"
+                  onClick={() => setSelectedPost(post)} // Open modal
+                >
                   <Image
                     src={post.imageUrl || "/default-image.jpg"}
                     alt={post.title}
                     width={400}
                     height={300}
-                    className="w-full h-56 object-cover group-hover:scale-105 transition-all duration-300"
-                    unoptimized // Allow external images
+                    className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized
                   />
                   <div className="p-6">
-                    <h3 className="text-2xl font-semibold text-gray-900">{post.title}</h3>
-                    <p className="mt-2 text-gray-600">
+                    <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                      {post.title}
+                    </h3>
+                    <p className="mt-2 text-gray-600 dark:text-gray-300">
                       {post.content
-                        ? expandedPostId === post.id
-                          ? post.content
-                          : `${post.content.substring(0, 100)}...`
+                        ? `${post.content.substring(0, 100)}...`
                         : "No content available."}
                     </p>
-                    <p className="mt-2 text-sm text-gray-500">
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                       By {post.author || "Unknown"} -{" "}
-                      {post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleDateString() : "Unknown date"}
+                      {post.createdAt
+                        ? new Date(post.createdAt.seconds * 1000).toLocaleDateString()
+                        : "Unknown date"}
                     </p>
                     <button
-                      onClick={() => toggleDescription(post.id)}
-                      className="mt-4 text-indigo-600 hover:underline"
+                      onClick={() => setSelectedPost(post)}
+                      className="mt-4 text-indigo-600 dark:text-indigo-400 hover:underline"
                     >
-                      {expandedPostId === post.id ? "Show less" : "Read more"}
+                      Read more
                     </button>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-center text-gray-500">No posts available.</p>
+              <p className="text-center text-gray-500 dark:text-gray-400">No posts available.</p>
             )}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <Footer />
+      {/* Post Modal */}
+      {selectedPost && <PostModal post={selectedPost} onClose={() => setSelectedPost(null)} />}
     </div>
   );
 }

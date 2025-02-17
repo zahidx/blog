@@ -3,7 +3,7 @@ import { FaTwitter, FaFacebook, FaGithub, FaYoutube, FaLinkedin, FaInstagram } f
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-12 mt-16 pl-6 pr-6">
+    <footer className="bg-gray-900 text-white py-12 pt-16 pl-6 pr-6">
       <div className="container mx-auto px-6 md:px-12">
         <div className="flex flex-col md:flex-row justify-between gap-8 md:gap-12"> {/* Reduced gap */}
         <div className="flex flex-col md:flex-row justify-between gap-8 md:gap-12">

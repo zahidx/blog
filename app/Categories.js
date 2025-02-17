@@ -8,7 +8,7 @@ const Categories = () => {
         <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">Browse by Category</h2>
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
           {/* Category 1 - Technology */}
-          <div className="group relative overflow-hidden rounded-lg shadow-xl cursor-pointer transform transition-all hover:shadow-2xl hover:border-l-4 hover:border-[#4c6ef5] dark:hover:border-[#4c6ef5]">
+          <a href="/tech" className="group relative overflow-hidden rounded-lg shadow-xl cursor-pointer transform transition-all hover:shadow-2xl hover:border-l-4 hover:border-[#4c6ef5] dark:hover:border-[#4c6ef5]">
             <div className="absolute inset-0 bg-gradient-to-r from-[#203175] to-[#0e2b7c] opacity-70 dark:bg-gradient-to-r dark:from-[#1e2d69] dark:to-[#2a4b8c]"></div>
             <div className="relative z-10 text-left p-8 text-white">
               {/* Flex container for icon and text */}
@@ -25,10 +25,10 @@ const Categories = () => {
               </div>
             </div>
             <div className="absolute inset-0 bg-gradient-to-r from-[#4c6ef5] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-          </div>
+          </a>
 
           {/* Category 2 - Lifestyle */}
-          <div className="group relative overflow-hidden rounded-lg shadow-xl cursor-pointer transform transition-all hover:shadow-2xl hover:border-l-4 hover:border-[#ff7f50] dark:hover:border-[#ff7f50]">
+          <a href="/lifestyle" className="group relative overflow-hidden rounded-lg shadow-xl cursor-pointer transform transition-all hover:shadow-2xl hover:border-l-4 hover:border-[#ff7f50] dark:hover:border-[#ff7f50]">
             <div className="absolute inset-0 bg-gradient-to-r from-[#8f4125] to-[#922d1b] opacity-70 dark:bg-gradient-to-r dark:from-[#cc5c39] dark:to-[#d97b51]"></div>
             <div className="relative z-10 text-left p-8 text-white">
               {/* Flex container for icon and text */}
@@ -45,10 +45,10 @@ const Categories = () => {
               </div>
             </div>
             <div className="absolute inset-0 bg-gradient-to-r from-[#ff7f50] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-          </div>
+          </a>
 
           {/* Category 3 - Education */}
-          <div className="group relative overflow-hidden rounded-lg shadow-xl cursor-pointer transform transition-all hover:shadow-2xl hover:border-l-4 hover:border-[#ffd700] dark:hover:border-[#ffd700]">
+          <a href="/education" className="group relative overflow-hidden rounded-lg shadow-xl cursor-pointer transform transition-all hover:shadow-2xl hover:border-l-4 hover:border-[#ffd700] dark:hover:border-[#ffd700]">
             <div className="absolute inset-0 bg-gradient-to-r from-[#8a770a] to-[#948809] opacity-70 dark:bg-gradient-to-r dark:from-[#cba800] dark:to-[#ffb600]"></div>
             <div className="relative z-10 text-left p-8 text-white">
               {/* Flex container for icon and text */}
@@ -65,7 +65,7 @@ const Categories = () => {
               </div>
             </div>
             <div className="absolute inset-0 bg-gradient-to-r from-[#ffd700] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-          </div>
+          </a>
         </div>
       </div>
     </section>

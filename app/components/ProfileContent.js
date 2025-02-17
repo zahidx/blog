@@ -102,12 +102,7 @@ export default function AdvancedDashboard() {
             {theme === 'dark' ? <FaSun className="text-yellow-500" /> : <FaMoon className="text-gray-800" />}
           </button>
           <span className="text-lg">{user.firstName}</span>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center"
-          >
-            <FaSignOutAlt className="mr-2" /> Logout
-          </button>
+          
         </div>
       </header>
 

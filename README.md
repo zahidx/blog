@@ -64,6 +64,6 @@ Contributions are welcome! Feel free to **fork** and create a **pull request**.
 ## 📜 **License**  
 This project is licensed under the **MIT License**.  
 
-🔗 **Follow me on GitHub:** [@yourusername](https://github.com/zahidx)  
+🔗 **Follow me on GitHub:** [Profile](https://github.com/zahidx)  
 ```
 

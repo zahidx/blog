@@ -21,6 +21,7 @@ import CuteLoader from "./components/CuteLoader";
 import { HeartIcon, ChatBubbleLeftIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconFilled } from "@heroicons/react/24/solid";
 import { toast } from "react-hot-toast";
+import Footer from "./components/Footer";
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
@@ -182,6 +183,7 @@ export default function Home() {
           {selectedPost && <PostModal post={selectedPost} onClose={() => setSelectedPost(null)} />}
         </>
       )}
+        <Footer />
     </div>
   );
 }
